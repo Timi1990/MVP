@@ -1,47 +1,60 @@
 package view;
 
-import notifications.DirNotification;
-import notifications.GenerateMazeNotification;
-import notifications.LoadMazeObservableNotification;
+import notifications.ObservableNotification;
+import presenter.Command;
 
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Observable;
 
 public class MazeView extends Observable implements IView {
 
-    public void loadMaze()
+    private final CLIFactory cliFactory;
+
+    public MazeView()
     {
-        LoadMazeObservableNotification loadMazeObservableNotification=new LoadMazeObservableNotification("C:\\Users\\Timi\\Desktop\\test.txt","First" );
-        this.setChanged();
-        this.notifyObservers(loadMazeObservableNotification);
-    }
-    public void generate(String mazeName,int dimension,int rows,int columns)
-    {
-        GenerateMazeNotification generateMazeNotification= new GenerateMazeNotification(mazeName,dimension,rows,columns);
-        this.setChanged();
-        this.notifyObservers(generateMazeNotification);
+        cliFactory = new CLIFactory();
     }
 
-    public void dir(String pathName)
+
+    @Override
+    public void start(String fileInput, String fileOutput, HashMap<String, Command> stringToCommand)
     {
-        DirNotification dirNotification=new DirNotification(pathName);
-        this.setChanged();
-        this.notifyObservers(dirNotification);
+        try
+        {
+            BufferedReader in = new BufferedReader(new FileReader(fileInput));
+            PrintWriter out = new PrintWriter(fileOutput);
+
+            CLI cli = cliFactory.createFrom(in, out, stringToCommand,this);
+            cli.start();
+
+        } catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void onMazeLoaded(String mazeName) {
-        System.out.println("Maze " +mazeName +" is loaded" );
+    public void notifyFromReader(String notify) {
+
+        setChanged();
+
+        notifyObservers(notify);
     }
 
     @Override
-    public void onMazeGenerated(String mazeName) {
-        System.out.println("Maze "+mazeName+ " is ready");
+    public void handleCommandNotFound() {
+
+        System.out.println("command not found");
+
     }
 
     @Override
-    public void displayDir(List<String> fileNames) {
-        fileNames.forEach(System.out::println);
+    public void displayData(ObservableNotification observableNotification) {
+        observableNotification.print();
     }
 
 

@@ -6,9 +6,9 @@ package notifications;
 public class GenerateMazeNotification extends ObservableNotification {
 
     String mazeName;
-    int dimension,rows,columns;
+    Integer dimension,rows,columns;
 
-    public GenerateMazeNotification(String mazeName, int dimension, int rows, int columns) {
+    public GenerateMazeNotification(String mazeName,Integer dimension,Integer rows,Integer columns ) {
         super(ObservableNotificationNames.GenerateMazeNotificationName);
         this.mazeName = mazeName;
         this.dimension = dimension;
@@ -30,5 +30,10 @@ public class GenerateMazeNotification extends ObservableNotification {
 
     public int getColumns() {
         return columns;
+    }
+
+    @Override
+    public void print() {
+        System.out.println("Maze "+mazeName+" is ready");
     }
 }

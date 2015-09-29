@@ -1,19 +1,42 @@
 package model;
 
-import controller.MazeDoesntExistsException;
-import notifications.DirNotification;
-import notifications.GenerateMazeNotification;
-import notifications.LoadMazeObservableNotification;
+import algorithms.mazeGenerators.Maze3d;
+import algorithms.search.Solution;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.HashMap;
 
 public interface IModel {
-	void loadMaze(LoadMazeObservableNotification loadMazeObservableNotification) throws MazeDoesntExistsException, ExecutionException, InterruptedException;
 
-	void generateMaze(GenerateMazeNotification generateMazeNotification) throws ExecutionException, InterruptedException;
+	void generateMaze(String mazeName,Integer dimension, Integer rows, Integer columns) throws Exception;
 
-	void dir(DirNotification dirNotification);
+	void displayMaze(String mazeName) throws Exception;
+
+	Maze3d getMazeByName(String mazeName);
+
+	Solution getSolutionByName(String mazeName);
+
+	void getCrossSelectionBy(String axis, String mazeName, Integer index) throws Exception;
+
+	void save(String filePath, String mazeName) throws Exception;
+
+	void load(String filePath,String mazeName) throws Exception;
+
+	void putMazeAndName(String mazeName, Maze3d maze);
+
+	void solve (String name, String algorithm) throws Exception;
+
+	void putMazeAndSolution(Maze3d maze, Solution solution);
+
+	void displaySolution(String mazeName) throws Exception;
+
+	void fileSize(String mazeName) throws Exception;
+
+	void saveSolutionsBeforeExit() throws IOException;
+
+	HashMap<Maze3d,Solution> loadSolutionsForMazes() throws IOException, ClassNotFoundException;
+
+	void exit() throws IOException;
+
+
 }

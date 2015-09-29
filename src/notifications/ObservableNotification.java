@@ -3,7 +3,7 @@ package notifications;
 /**
  * Created by Timi on 9/26/2015.
  */
-public class ObservableNotification {
+public abstract class ObservableNotification {
     private String notificationName;
 
     public ObservableNotification() {
@@ -16,4 +16,8 @@ public class ObservableNotification {
     public ObservableNotification(String notificationName) {
         this.notificationName = notificationName;
     }
+
+    abstract public void print();
+
+
 }

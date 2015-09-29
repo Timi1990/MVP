@@ -1,26 +1,40 @@
 package boot;
 
-import model.IModel;
 import model.MazeModel;
+import presenter.Command;
 import presenter.Presenter;
-import sun.security.util.Cache;
-import view.IView;
 import view.MazeView;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class Run {
 
-	public static void main(String[] args) {
-		MazeView view=new MazeView();
-		MazeModel model=new MazeModel();
-		Presenter presenter=new Presenter(model, view);
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("Enter input file path...");
+		String fileInput = scanner.next();
+
+		System.out.println("Enter output file path...");
+		String fileOutput = scanner.next();
+
+		MazeModel model = new MazeModel();
+		MazeView view = new MazeView();
+		Presenter presenter = new Presenter(model,view);
+
 		model.addObserver(presenter);
 		view.addObserver(presenter);
-		view.loadMaze();
-		view.generate("second", 4,10,9);
-		view.dir("C:\\Users\\Timi\\Desktop");
-		
-		System.exit(1);
-		//C:\Users\Timi\Desktop\test.txt
-	}
 
+		HashMap<String, Command> commandHashMap = presenter.createAndGetCommandHashMap();
+
+		view.start(fileInput, fileOutput, commandHashMap);
+
+//		C:\Users\Timi\Desktop\input.txt
+//		C:\Users\Timi\Desktop\output2.gz
+
+	}
 }
+
+

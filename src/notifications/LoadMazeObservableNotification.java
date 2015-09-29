@@ -23,4 +23,9 @@ public class LoadMazeObservableNotification extends ObservableNotification {
     public String getMazeName() {
         return mazeName;
     }
+
+    @Override
+    public void print() {
+
+    }
 }

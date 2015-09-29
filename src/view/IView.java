@@ -1,12 +1,20 @@
 package view;
 
-import java.util.List;
+import notifications.ObservableNotification;
+import presenter.Command;
+
+import java.util.HashMap;
 
 public interface IView {
-    void onMazeLoaded(String mazeName);
 
-    void onMazeGenerated(String mazeName);
+    void start(String fileInput, String fileOutput, HashMap<String, Command> stringToCommand);
 
-    void displayDir(List<String> fileNames);
+    void notifyFromReader(String notify);
+
+    void handleCommandNotFound();
+
+    void displayData(ObservableNotification observableNotification);
+
+
 	
 }
