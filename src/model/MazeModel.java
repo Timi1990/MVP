@@ -1,12 +1,16 @@
 package model;
 
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Maze3dGenerator;
+import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import boot.GlobalThreadPool;
 import io.MyCompressorOutputStream;
-import notifications.DisplayMazeNotification;
-import notifications.DisplaySolutionNotification;
+import notifications.DisplayMazeExistsNotification;
+import notifications.PropertiesNotification;
+import presenter.Properties;
 
+import java.beans.XMLDecoder;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Observable;
@@ -16,8 +20,11 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class MazeModel extends Observable implements IModel {
+
 	private HashMap<Maze3d, Solution> mazeAndSolution = new HashMap<Maze3d, Solution>();
 	private HashMap<String, Maze3d> mazeAndName = new HashMap<String, Maze3d>();
+	private Maze3dGenerator mazeGenerator;
+	private Searcher searcher;
 
 
 	@Override
@@ -31,6 +38,13 @@ public class MazeModel extends Observable implements IModel {
 		return mazeAndSolution.get(mazeName);
 	}
 
+	public Searcher getSearcher() {
+		return searcher;
+	}
+
+	public Maze3dGenerator getMazeGenerator() {
+		return mazeGenerator;
+	}
 
 	@Override
 	public void generateMaze(String mazeName, Integer dimension, Integer rows, Integer columns) throws Exception {
@@ -38,18 +52,16 @@ public class MazeModel extends Observable implements IModel {
 
 		if(mazeAndName.containsKey(mazeName)) {
 
-			DisplayMazeNotification displayMazeNotification = new DisplayMazeNotification();
+			DisplayMazeExistsNotification displayMazeExistsNotification = new DisplayMazeExistsNotification();
 
-			displayMazeNotification.setMaze(mazeAndName.get(mazeName));
-
-			notifyObservers(displayMazeNotification);
+			notifyObservers(displayMazeExistsNotification);
 
 		}
 		else
 		{
 			GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeName, dimension, rows, columns, this);
 
-			Future<Maze3d> future = GlobalThreadPool.getInstance().addCallableMazeToPool(generateMazeCall);
+			Future<Maze3d> future = GlobalThreadPool.getInstance().addCallableToPool(generateMazeCall);
 
 			Maze3d maze = future.get();
 
@@ -65,7 +77,7 @@ public class MazeModel extends Observable implements IModel {
 
 		DisplayMazeCall displayMazeCall = new DisplayMazeCall(mazeName, this);
 
-		Future<Object> future = GlobalThreadPool.getInstance().addAnyCallableToPool(displayMazeCall);
+		Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(displayMazeCall);
 
 		future.get();
 	}
@@ -78,7 +90,7 @@ public class MazeModel extends Observable implements IModel {
 
 			DisplayCrossSelectionCall displayCrossSelectionCall = new DisplayCrossSelectionCall(this, axis, maze, index);
 
-			Future<Object> future = GlobalThreadPool.getInstance().addAnyCallableToPool(displayCrossSelectionCall);
+			Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(displayCrossSelectionCall);
 
 			future.get();
 		}
@@ -90,7 +102,7 @@ public class MazeModel extends Observable implements IModel {
 		if(mazeAndName.containsKey(mazeName)) {
 			SaveMazeCall saveMazeCall = new SaveMazeCall(new MyCompressorOutputStream(new FileOutputStream(filePath)), mazeName, this);
 
-			Future<Object> future = GlobalThreadPool.getInstance().addAnyCallableToPool(saveMazeCall);
+			Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(saveMazeCall);
 
 			future.get();
 
@@ -103,7 +115,7 @@ public class MazeModel extends Observable implements IModel {
 		setChanged();
 		LoadMazeCall loadMazeCall = new LoadMazeCall(this,filePath,mazeName);
 
-		Future<Object> future = GlobalThreadPool.getInstance().addAnyCallableToPool(loadMazeCall);
+		Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(loadMazeCall);
 
 		future.get();
 	}
@@ -114,7 +126,7 @@ public class MazeModel extends Observable implements IModel {
 	}
 
 	@Override
-	public void solve(String name, String algorithm) throws Exception {
+	public void solve(String name) throws Exception {
 
 		setChanged();
 
@@ -122,16 +134,14 @@ public class MazeModel extends Observable implements IModel {
 		{
 			if(mazeAndSolution.containsKey(mazeAndName.get(name)))
 			{
-				Solution solution = mazeAndSolution.get(mazeAndName.get(name));
+				DisplayMazeExistsNotification displayMazeExistsNotification = new DisplayMazeExistsNotification();
 
-				DisplaySolutionNotification displaySolutionNotification = new DisplaySolutionNotification(solution);
-
-				notifyObservers(displaySolutionNotification);
+				notifyObservers(displayMazeExistsNotification);
 			}
 			else {
-				SolveMazeCall solveMazeCall = new SolveMazeCall(name, algorithm, this);
+				SolveMazeCall solveMazeCall = new SolveMazeCall(name,this);
 
-				Future<Solution> future = GlobalThreadPool.getInstance().addCallableSolutionToPool(solveMazeCall);
+				Future<Solution> future = GlobalThreadPool.getInstance().addCallableToPool(solveMazeCall);
 
 				Solution solution = future.get();
 
@@ -153,7 +163,7 @@ public class MazeModel extends Observable implements IModel {
 
 		DisplaySolutionCall displaySolutionCall = new DisplaySolutionCall(this,mazeName);
 
-		Future<Object> future = GlobalThreadPool.getInstance().addAnyCallableToPool(displaySolutionCall);
+		Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(displaySolutionCall);
 
 		future.get();
 
@@ -169,7 +179,7 @@ public class MazeModel extends Observable implements IModel {
 		{
 			FileSizeCall fileSizeCall = new FileSizeCall(this,mazeName);
 
-			Future<Object> future = GlobalThreadPool.getInstance().addAnyCallableToPool(fileSizeCall);
+			Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(fileSizeCall);
 
 			future.get();
 		}
@@ -197,7 +207,7 @@ public class MazeModel extends Observable implements IModel {
 		Scanner scanner = new Scanner(System.in);
 		String filePath;
 
-		System.out.println("Enter path to load from");
+		System.out.println("Enter path(.gz) to load from solutions:");
 		filePath = scanner.next();
 
 		ObjectInputStream in = new ObjectInputStream(new GZIPInputStream((new FileInputStream(filePath))));
@@ -211,11 +221,27 @@ public class MazeModel extends Observable implements IModel {
 	}
 
 	@Override
+	public void setMazeAndSolutionMap(HashMap<Maze3d, Solution> hm) {
+		this.mazeAndSolution = hm;
+	}
+
+	@Override
 	public void exit() throws IOException {
 		saveSolutionsBeforeExit();
 		System.out.println("Exiting...");
 		System.exit(1);
 	}
+
+	@Override
+	public void setMazeGenerator(Maze3dGenerator mazeGenerator) {
+		this.mazeGenerator = mazeGenerator;
+	}
+
+	@Override
+	public void setSearcher(Searcher searcher) {
+		this.searcher = searcher;
+	}
+
 
 
 	public Solution getSolutionByMaze(Maze3d maze)
@@ -224,6 +250,25 @@ public class MazeModel extends Observable implements IModel {
 			return mazeAndSolution.get(maze);
 		else
 			return null;
+	}
+
+	@Override
+	public void setProperties(String filePath) {
+		this.setChanged();
+		XMLDecoder xmlDecoder = null;
+		try {
+			xmlDecoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(filePath)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		Properties properties = (Properties)xmlDecoder.readObject();
+
+		xmlDecoder.close();
+
+		PropertiesNotification propertiesNotification = new PropertiesNotification(properties);
+
+		notifyObservers(propertiesNotification);
 	}
 }
 

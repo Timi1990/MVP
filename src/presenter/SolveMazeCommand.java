@@ -19,9 +19,8 @@ public class SolveMazeCommand implements Command {
     public void doCommand(List<String> args) throws Exception {
 
         String name = args.get(0);
-        String algorithm = args.get(1);
 
-        model.solve(name,algorithm);
+        model.solve(name);
 
     }
 }

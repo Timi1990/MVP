@@ -12,4 +12,6 @@ public class ObservableNotificationNames {
     public static final String DisplayLoadName = "Load Maze";
     public static final String DisplayFileSizeName = "File Size";
     public static final String DisplaySolutionName = "Display Solution";
+    public static final String DisplayMazeExistsName = "Maze already exists!";
+    public static final String PropertiesName = "Properties";
 }

@@ -1,9 +1,17 @@
 package presenter;
 
+import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Maze3dGenerator;
+import algorithms.mazeGenerators.MyMaze3dGenerator;
+import algorithms.mazeGenerators.SimpleMaze3dGenerator;
+import algorithms.search.*;
+import boot.GlobalThreadPool;
 import model.IModel;
 import notifications.ObservableNotification;
+import notifications.PropertiesNotification;
 import view.IView;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Presenter implements Observer {
@@ -20,9 +28,15 @@ public class Presenter implements Observer {
 	public void update(Observable observable, Object obj) {
 
 		if (observable == model) {
-			ObservableNotification notification = (ObservableNotification) obj;
+			if(obj instanceof PropertiesNotification)
+			{
+				setProperties(((PropertiesNotification) obj).getProperties());
+			}
+			else {
+				ObservableNotification notification = (ObservableNotification) obj;
 
-			view.displayData(notification);
+				view.displayData(notification);
+			}
 
 		} else if (observable == view) {
 			String currentLine = (String) obj;
@@ -74,6 +88,49 @@ public class Presenter implements Observer {
 		int start = command.indexOf('<');
 		int end = command.lastIndexOf('>');
 		return command.substring(start + 1, end);
+	}
+	public void setProperties(Properties properties)
+	{
+		List<String> propertiesList = properties.getPropertiesList();
+
+		HashMap<String,Searcher> searcherFactory = new HashMap<String,Searcher>();
+		HashMap<String,Maze3dGenerator> generatorsFactory = new HashMap<String,Maze3dGenerator>();
+
+		searcherFactory.put("BFS", new BFS());
+		searcherFactory.put("Astar", new Astar(new MazeManhattanDistance()));
+		generatorsFactory.put("Simple maze generator", new SimpleMaze3dGenerator());
+		generatorsFactory.put("My maze generator", new MyMaze3dGenerator());
+
+		Integer numOfThreads = Integer.decode(propertiesList.get(0));
+		GlobalThreadPool.getInstance().setAndCreateNumOfThreads(numOfThreads);
+
+		String searcherName = propertiesList.get(1);
+		String generator = propertiesList.get(2);
+
+		if(generatorsFactory.containsKey(generator) && searcherFactory.containsKey(searcherName))
+		{
+			model.setMazeGenerator(generatorsFactory.get(generator));
+
+			model.setSearcher(searcherFactory.get(searcherName));
+		}
+		else
+			view.displayData(new ObservableNotification() {
+				@Override
+				public void print() {
+					System.out.println("Invalid properties");
+					System.exit(1);
+				}
+			});
+
+		try {
+			HashMap<Maze3d,Solution> hm = this.model.loadSolutionsForMazes();
+			this.model.setMazeAndSolutionMap(hm);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public HashMap<String,Command> createAndGetCommandHashMap()

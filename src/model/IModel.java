@@ -1,7 +1,10 @@
 package model;
 
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Maze3dGenerator;
+import algorithms.search.Searcher;
 import algorithms.search.Solution;
+import presenter.Properties;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,7 +27,7 @@ public interface IModel {
 
 	void putMazeAndName(String mazeName, Maze3d maze);
 
-	void solve (String name, String algorithm) throws Exception;
+	void solve (String name) throws Exception;
 
 	void putMazeAndSolution(Maze3d maze, Solution solution);
 
@@ -35,8 +38,16 @@ public interface IModel {
 	void saveSolutionsBeforeExit() throws IOException;
 
 	HashMap<Maze3d,Solution> loadSolutionsForMazes() throws IOException, ClassNotFoundException;
+	
+	void setMazeAndSolutionMap(HashMap<Maze3d,Solution> hm);
 
 	void exit() throws IOException;
+
+	void setMazeGenerator(Maze3dGenerator mazeGenerator);
+
+	void setSearcher(Searcher searcher);
+
+	void setProperties(String filePath);
 
 
 }

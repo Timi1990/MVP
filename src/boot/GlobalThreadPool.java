@@ -10,7 +10,12 @@ import java.util.concurrent.*;
  */
 public class GlobalThreadPool {
     private ExecutorService executor;
-    private Future<Maze3d> future;
+    private Integer numOfThreads;
+
+    public void setAndCreateNumOfThreads(Integer numOfThreads) {
+        executor = Executors.newFixedThreadPool(numOfThreads);
+        this.numOfThreads = numOfThreads;
+    }
 
     private static GlobalThreadPool ourInstance = new GlobalThreadPool();
 
@@ -19,20 +24,7 @@ public class GlobalThreadPool {
         return ourInstance;
     }
 
-    private GlobalThreadPool()
-    {
-        executor = Executors.newFixedThreadPool(30);
-    }
-
-    public Future<Maze3d> addCallableMazeToPool(Callable<Maze3d> callable) throws Exception {
-        return executor.submit(callable);
-    }
-
-    public Future<Solution> addCallableSolutionToPool(Callable<Solution> callable) throws Exception {
-        return executor.submit(callable);
-    }
-
-    public Future<Object> addAnyCallableToPool(Callable<Object> callable) throws Exception {
+    public <T> Future<T> addCallableToPool(Callable<T> callable) {
         return executor.submit(callable);
     }
 

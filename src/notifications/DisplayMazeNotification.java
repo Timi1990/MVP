@@ -9,21 +9,16 @@ public class DisplayMazeNotification extends ObservableNotification {
 
     private Maze3d maze;
 
-    public DisplayMazeNotification()
+    public DisplayMazeNotification(Maze3d maze)
     {
         super(ObservableNotificationNames.DisplayMazeNotificationName);
+        this.maze = maze;
     }
+
 
     @Override
     public void print() {
         maze.printMaze();
     }
 
-    public Maze3d getMaze() {
-        return maze;
-    }
-
-    public void setMaze(Maze3d maze) {
-        this.maze = maze;
-    }
 }

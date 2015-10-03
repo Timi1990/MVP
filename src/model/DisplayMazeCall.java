@@ -1,5 +1,6 @@
 package model;
 
+import algorithms.mazeGenerators.Maze3d;
 import notifications.DisplayMazeNotification;
 
 import java.util.concurrent.Callable;
@@ -19,9 +20,10 @@ public class DisplayMazeCall implements Callable<Object>{
 
     @Override
     public Object call() throws Exception {
-        DisplayMazeNotification displayMazeNotification = new DisplayMazeNotification();
 
-        displayMazeNotification.setMaze(model.getMazeByName(mazeName));
+        Maze3d maze = model.getMazeByName(mazeName);
+
+        DisplayMazeNotification displayMazeNotification = new DisplayMazeNotification(maze);
 
         model.notifyObservers(displayMazeNotification);
 
