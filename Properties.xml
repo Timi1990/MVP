@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Note to client: -->
+<!-- The first integer represents number of thraeds in thread pool. -->
+<!-- Possible algorithm names: Astar, BFS. -->
+<!-- Possible maze generator names: My maze generator, Simple maze generator.  -->
+<java version="1.8.0_51" class="java.beans.XMLDecoder">
+ <object class="presenter.Properties" id="Properties0">
+  <void property="propertiesList">
+   <void method="add">
+    <string>20</string>
+   </void>
+   <void method="add">
+    <string>Astar</string>
+   </void>
+   <void method="add">
+    <string>My maze generator</string>
+   </void>
+   <void method="add">
+    <string>GUI</string>
+	</void>
+  </void>
+ </object>
+</java>
