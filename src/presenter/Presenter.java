@@ -10,6 +10,8 @@ import model.IModel;
 import notifications.ObservableNotification;
 import notifications.PropertiesNotification;
 import view.IView;
+import view.MazeCLIView;
+import view.MazeGUIView;
 
 import java.io.IOException;
 import java.util.*;
@@ -40,13 +42,20 @@ public class Presenter implements Observer {
 
 		} else if (observable == view) {
 			String currentLine = (String) obj;
+			System.out.println("in presenter");
 			try {
 				if (currentLine.equals("Exit"))
 
 					model.exit();
+				else if(!(currentLine.contains("<")))
+				{
+					model.setProperties(currentLine);
+				}
 
-				else
+				else {
 					doCommandIfContains(currentLine);
+					System.out.println("in do command");
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -106,6 +115,7 @@ public class Presenter implements Observer {
 
 		String searcherName = propertiesList.get(1);
 		String generator = propertiesList.get(2);
+		String viewProp = propertiesList.get(3);
 
 		if(generatorsFactory.containsKey(generator) && searcherFactory.containsKey(searcherName))
 		{
@@ -113,24 +123,25 @@ public class Presenter implements Observer {
 
 			model.setSearcher(searcherFactory.get(searcherName));
 		}
-		else
-			view.displayData(new ObservableNotification() {
-				@Override
-				public void print() {
-					System.out.println("Invalid properties");
-					System.exit(1);
-				}
-			});
-
-		try {
-			HashMap<Maze3d,Solution> hm = this.model.loadSolutionsForMazes();
-			this.model.setMazeAndSolutionMap(hm);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		if(viewProp.equals("CLI"))
+		{
+			view.exitFromGui();
+			view = new MazeCLIView();
 		}
+//		try {
+//			HashMap<Maze3d,Solution> hm = this.model.loadSolutionsForMazes();
+//			this.model.setMazeAndSolutionMap(hm);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		}
 
+	}
+
+	public void setView(MazeCLIView view)
+	{
+		this.view = view;
 	}
 
 	public HashMap<String,Command> createAndGetCommandHashMap()

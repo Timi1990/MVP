@@ -15,9 +15,9 @@ public class ReaderFileRunnable implements Runnable
     private final BufferedReader in;
     private final PrintWriter out;
     private final HashMap<String, Command> commandHashMap;
-    private final IView view;
+    private final MazeCLIView view;
 
-    public ReaderFileRunnable(BufferedReader in, PrintWriter out, HashMap<String, Command> commandHashMap,IView view)
+    public ReaderFileRunnable(BufferedReader in, PrintWriter out, HashMap<String, Command> commandHashMap,MazeCLIView view)
     {
         this.in = in;
         this.out = out;
@@ -39,6 +39,7 @@ public class ReaderFileRunnable implements Runnable
         {
             while ((currentLine = in.readLine()) != null)
             {
+                System.out.println("in reader file runnable in loop");
                 view.notifyFromReader(currentLine);
             }
         } catch (Exception e)

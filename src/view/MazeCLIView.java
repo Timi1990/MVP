@@ -10,11 +10,11 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Observable;
 
-public class MazeView extends Observable implements IView {
+public class MazeCLIView extends Observable implements IView {
 
     private final CLIFactory cliFactory;
 
-    public MazeView()
+    public MazeCLIView()
     {
         cliFactory = new CLIFactory();
     }
@@ -55,6 +55,11 @@ public class MazeView extends Observable implements IView {
     @Override
     public void displayData(ObservableNotification observableNotification) {
         observableNotification.print();
+    }
+
+    @Override
+    public void exitFromGui() {
+
     }
 
 

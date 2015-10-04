@@ -1,73 +1,48 @@
 package boot;
 
 import model.MazeModel;
+import presenter.Command;
 import presenter.Presenter;
-import view.MazeMenu;
+import view.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Scanner;
 
-public class Run
-{
+public class Run {
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException
-    {
+	public static void main(String[] args) {
 
+		MazeModel mazeModel = new MazeModel();
+		MazeCLIView mazeCLIView = new MazeCLIView();
+		MazeGUIView mazeGUIView = new MazeGUIView(500,500);
+		Presenter presenter = new Presenter(mazeModel, mazeGUIView);
+		mazeModel.addObserver(presenter);
+		mazeGUIView.addObserver(presenter);
 
-        //		Scanner scanner = new Scanner(System.in);
-        //
-        //		System.out.println("Enter input file path...");
-        //		String fileInput = scanner.next();
-        //
-        //		System.out.println("Enter output file path...");
-        //		String fileOutput = scanner.next();
-        //
-        //		MazeModel model = new MazeModel();
-        //		MazeView view = new MazeView();
-        //
-        //		Properties properties = readPropertiesFromXML();  //Default in file.
-        //		Presenter presenter = new Presenter(model,view);
-        //
-        //
-        //		model.addObserver(presenter);
-        //		view.addObserver(presenter);
-        //		presenter.setProperties(properties);
-        //
-        //
-        //
-        //		HashMap<String, Command> commandHashMap = presenter.createAndGetCommandHashMap();
+		mazeGUIView.run();
 
-        //		view.start(fileInput, fileOutput, commandHashMap);
+		mazeCLIView.addObserver(presenter);
+		presenter.setView(mazeCLIView);
 
-        MazeModel mazeModel = new MazeModel();
-        MazeMenu mazeMenu = new MazeMenu(500, 500);
-        Presenter presenter = new Presenter(mazeModel, mazeMenu);
-        mazeModel.addObserver(presenter);
-        mazeMenu.addObserver(presenter);
+		Scanner scanner = new Scanner(System.in);
 
-        mazeMenu.run();
+		System.out.println("Enter input file path...");
+		String fileInput = scanner.next();
 
-        //		C:\Users\Timi\Desktop\input.txt
-        //		C:\Users\Timi\Desktop\output2.gz
+		System.out.println("Enter output file path...");
+		String fileOutput = scanner.next();
+
+		HashMap<String, Command> commandHashMap = presenter.createAndGetCommandHashMap();
+
+		mazeCLIView.start(fileInput, fileOutput, commandHashMap);
 
 
-    }
+//		C:\Users\Timi\Desktop\input.txt
+//		C:\Users\Timi\Desktop\output2.gz
 
-    //	public Properties readPropertiesFromXML(String filePath)
-    //	{
-    //
-    //		XMLDecoder xmlDecoder = null;
-    //		try {
-    //			xmlDecoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(filePath)));
-    //		} catch (FileNotFoundException e) {
-    //			e.printStackTrace();
-    //		}
-    //
-    //		Properties properties = (Properties)xmlDecoder.readObject();
-    //
-    //		xmlDecoder.close();
-    //
-    //		return properties;
-    //	}
+
+	}
 }
 
 

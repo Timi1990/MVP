@@ -11,7 +11,7 @@ import java.util.HashMap;
  */
 public class CLIFactory {
 
-    public CLI createFrom(BufferedReader in, PrintWriter out, HashMap<String, Command> commandHashMap,IView view)
+    public CLI createFrom(BufferedReader in, PrintWriter out, HashMap<String, Command> commandHashMap,MazeCLIView view)
     {
         ReaderFileRunnable readerFileRunnable = new ReaderFileRunnable(in, out, commandHashMap,view);
 

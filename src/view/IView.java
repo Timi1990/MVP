@@ -15,6 +15,7 @@ public interface IView {
 
     void displayData(ObservableNotification observableNotification);
 
+    void exitFromGui();
 
 	
 }
