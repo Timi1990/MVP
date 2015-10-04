@@ -89,11 +89,11 @@ public class MazeMenu extends BasicWindow implements IView
 
                 Maze3dGenerator maze3dGenerator = new MyMaze3dGenerator();
 
-                Maze3d maze3d = maze3dGenerator.generate(new MazeArgumentsForInit(4, 4, 4));
+                Maze3d maze3d = maze3dGenerator.generate(new MazeArgumentsForInit(7, 6, 8));
 
                 Position startPosition = maze3d.getStartPosition();
 
-                Image ball = new Image(display, "C:\\Users\\yoav\\Desktop\\ball.gif");
+                Image ball = new Image(display, "images/ball.gif");
 
                 GameCharacter gameCharacter = new GameCharacter(startPosition, ball);
 
