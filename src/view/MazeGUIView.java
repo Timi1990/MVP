@@ -80,10 +80,35 @@ public class MazeGUIView extends BasicWindow implements IView{
         shell.setMenuBar(menuBar);
         button.pack();
 
+        button.addSelectionListener(new SelectionAdapter()
+        {
+            @Override
+            public void widgetSelected(SelectionEvent selectionEvent)
+            {
+                MazeWindow mazeWindow = new MazeWindow(500, 500);
+
+                Maze3dGenerator maze3dGenerator = new MyMaze3dGenerator();
+
+                Maze3d maze3d = maze3dGenerator.generate(new MazeArgumentsForInit(7, 6, 8));
+
+                Position startPosition = maze3d.getStartPosition();
+
+                Image ball = new Image(display, "images/ball.gif");
+
+                GameCharacter gameCharacter = new GameCharacter(startPosition, ball);
+
+                Canvas canvas = mazeWindow.getCanvas();
+
+                mazeWindow.addKeyListener(new MazeKeyListener(gameCharacter, canvas, maze3d));
+                mazeWindow.addPaintListener(new MazePaintListener(canvas, maze3d, gameCharacter));
+
+                mazeWindow.run();
+            }
+        });
 
 
-
-        runMazeItem.addSelectionListener(new SelectionListener() {
+        runMazeItem.addSelectionListener(new SelectionListener()
+        {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 if (initialized == false) {
