@@ -1,31 +1,30 @@
 package notifications;
 
-/**
- * Created by Timi on 9/26/2015.
- */
-
-
-public class LoadMazeObservableNotification extends ObservableNotification {
-
+//todo check for needed?
+public class LoadMazeObservableNotification implements ObservableNotification
+{
     private String filePath;
     private String mazeName;
 
-    public LoadMazeObservableNotification(String filePath, String mazeName) {
-        super(ObservableNotificationNames.LoadMazeNotificationName);
+    public LoadMazeObservableNotification(String filePath, String mazeName)
+    {
         this.mazeName = mazeName;
         this.filePath = filePath;
     }
 
-    public String getFilePath() {
+    public String getFilePath()
+    {
         return filePath;
     }
 
-    public String getMazeName() {
+    public String getMazeName()
+    {
         return mazeName;
     }
 
     @Override
-    public void print() {
+    public void print()
+    {
 
     }
 }

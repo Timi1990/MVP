@@ -7,31 +7,30 @@ import notifications.GenerateMazeNotification;
 
 import java.util.concurrent.Callable;
 
-/**
- * Created by Timi on 9/27/2015.
- */
-public class GenerateMazeCall implements Callable<Maze3d>{
+public class GenerateMazeCall implements Callable<Maze3d>
+{
+    private final String mazeName;
+    private final MazeArgumentsForInit mazeArgumentsForInit;
+    private final MazeModel mazeModel;
 
-
-    private MazeModel mazeModel;
-    private GenerateMazeNotification generateMazeNotification;
-    private String mazeName;
-
-    public GenerateMazeCall(String mazeName,Integer dimension,Integer rows,Integer columns, MazeModel mazeModel) {
-        generateMazeNotification=new GenerateMazeNotification(mazeName, dimension, rows, columns);
-        this.mazeModel = mazeModel;
+    public GenerateMazeCall(String mazeName, MazeArgumentsForInit mazeArgumentsForInit, MazeModel mazeModel)
+    {
         this.mazeName = mazeName;
+        this.mazeArgumentsForInit = mazeArgumentsForInit;
+        this.mazeModel = mazeModel;
     }
 
     @Override
-    public Maze3d call() throws Exception {
-        MazeArgumentsForInit mazeArgumentsForInit = new MazeArgumentsForInit(generateMazeNotification.getDimension(),generateMazeNotification.getRows(),generateMazeNotification.getColumns());
-
+    public Maze3d call() throws Exception
+    {
         Maze3dGenerator maze3dGenerator = mazeModel.getMazeGenerator();
 
         Maze3d maze = maze3dGenerator.generate(mazeArgumentsForInit);
 
-        mazeModel.putMazeAndName(mazeName,maze);
+        GenerateMazeNotification generateMazeNotification = new GenerateMazeNotification(mazeName);
+
+        //todo ask timi for twice
+//        mazeModel.putMazeAndName(mazeName, maze);
 
         mazeModel.notifyObservers(generateMazeNotification);
 

@@ -4,50 +4,47 @@ import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
-import presenter.Properties;
 
 import java.io.IOException;
 import java.util.HashMap;
 
-public interface IModel {
+public interface IModel
+{
+    void generateMaze(String mazeName, Integer dimension, Integer rows, Integer columns) throws Exception;
 
-	void generateMaze(String mazeName,Integer dimension, Integer rows, Integer columns) throws Exception;
+    void displayMaze(String mazeName) throws Exception;
 
-	void displayMaze(String mazeName) throws Exception;
+    Maze3d getMazeByName(String mazeName);
 
-	Maze3d getMazeByName(String mazeName);
+    Solution getSolutionByName(String mazeName);
 
-	Solution getSolutionByName(String mazeName);
+    void getCrossSelectionBy(String axis, String mazeName, Integer index) throws Exception;
 
-	void getCrossSelectionBy(String axis, String mazeName, Integer index) throws Exception;
+    void save(String filePath, String mazeName) throws Exception;
 
-	void save(String filePath, String mazeName) throws Exception;
+    void load(String filePath, String mazeName) throws Exception;
 
-	void load(String filePath,String mazeName) throws Exception;
+    void putMazeAndName(String mazeName, Maze3d maze);
 
-	void putMazeAndName(String mazeName, Maze3d maze);
+    void solve(String name) throws Exception;
 
-	void solve (String name) throws Exception;
+    void putMazeAndSolution(Maze3d maze, Solution solution);
 
-	void putMazeAndSolution(Maze3d maze, Solution solution);
+    void displaySolution(String mazeName) throws Exception;
 
-	void displaySolution(String mazeName) throws Exception;
+    void fileSize(String mazeName) throws Exception;
 
-	void fileSize(String mazeName) throws Exception;
+    void saveSolutionsBeforeExit() throws IOException;
 
-	void saveSolutionsBeforeExit() throws IOException;
+    HashMap<Maze3d, Solution> loadSolutionsForMazes() throws IOException, ClassNotFoundException;
 
-	HashMap<Maze3d,Solution> loadSolutionsForMazes() throws IOException, ClassNotFoundException;
-	
-	void setMazeAndSolutionMap(HashMap<Maze3d,Solution> hm);
+    void setMazeAndSolutionMap(HashMap<Maze3d, Solution> hm);
 
-	void exit() throws IOException;
+    void exit() throws IOException;
 
-	void setMazeGenerator(Maze3dGenerator mazeGenerator);
+    void setMazeGenerator(Maze3dGenerator mazeGenerator);
 
-	void setSearcher(Searcher searcher);
+    void setSearcher(Searcher searcher);
 
-	void setProperties(String filePath);
-
-
+    void setProperties(String filePath);
 }

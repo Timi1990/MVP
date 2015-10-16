@@ -2,26 +2,25 @@ package view;
 
 import algorithms.mazeGenerators.IndexOutOfBoundsException;
 import algorithms.mazeGenerators.Maze3d;
-import algorithms.mazeGenerators.Position;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Shell;
 
 public class MazeKeyListener extends KeyAdapter
 {
     private final GameCharacter gameCharacter;
     private final Canvas canvas;
     private final Maze3d maze3d;
-
-    Boolean isF = true;
+    private GameHandler gameHandler;
 
     public MazeKeyListener(GameCharacter gameCharacter, Canvas canvas, Maze3d maze3d)
     {
         this.gameCharacter = gameCharacter;
         this.canvas = canvas;
         this.maze3d = maze3d;
+
+        gameHandler = new GameHandler(maze3d);
     }
 
     @Override
@@ -35,8 +34,6 @@ public class MazeKeyListener extends KeyAdapter
         {
             int[][] mazeData = maze3d.getCrossSectionByZ(z);
 
-            print(mazeData);
-
             switch (keyEvent.keyCode)
             {
                 case SWT.ARROW_RIGHT:
@@ -45,7 +42,9 @@ public class MazeKeyListener extends KeyAdapter
                     {
                         gameCharacter.setX(x + 1);
 
-                        checkForWin(z, y, x + 1);
+                        gameHandler.checkForWin(z, y, x + 1);
+
+                        canvas.redraw();
                     }
                     break;
 
@@ -56,7 +55,9 @@ public class MazeKeyListener extends KeyAdapter
                     {
                         gameCharacter.setX(x - 1);
 
-                        checkForWin(z, y, x-1);
+                        gameHandler.checkForWin(z, y, x - 1);
+
+                        canvas.redraw();
                     }
                     break;
                 }
@@ -66,7 +67,9 @@ public class MazeKeyListener extends KeyAdapter
                     {
                         gameCharacter.setY(y + 1);
 
-                        checkForWin(z, y+1, x);
+                        gameHandler.checkForWin(z, y + 1, x);
+
+                        canvas.redraw();
                     }
                     break;
                 }
@@ -76,7 +79,9 @@ public class MazeKeyListener extends KeyAdapter
                     {
                         gameCharacter.setY(y - 1);
 
-                        checkForWin(z, y-1, x);
+                        gameHandler.checkForWin(z, y - 1, x);
+
+                        canvas.redraw();
                     }
                     break;
                 }
@@ -86,11 +91,13 @@ public class MazeKeyListener extends KeyAdapter
                     {
                         int[][] crossSectionByZ = maze3d.getCrossSectionByZ(z + 1);
 
-                        if(crossSectionByZ[y][x] == 0)
+                        if (crossSectionByZ[y][x] == 0)
                         {
                             gameCharacter.setZ(z + 1);
 
-                            checkForWin(z+1, y, x);
+                            gameHandler.checkForWin(z + 1, y, x);
+
+                            canvas.redraw();
                         }
 
                     }
@@ -102,11 +109,13 @@ public class MazeKeyListener extends KeyAdapter
                     {
                         int[][] crossSectionByZ = maze3d.getCrossSectionByZ(z - 1);
 
-                        if(crossSectionByZ[y][x] == 0)
+                        if (crossSectionByZ[y][x] == 0)
                         {
                             gameCharacter.setZ(z - 1);
 
-                            checkForWin(z-1, y, x);
+                            gameHandler.checkForWin(z - 1, y, x);
+
+                            canvas.redraw();
                         }
                     }
                     break;
@@ -116,44 +125,5 @@ public class MazeKeyListener extends KeyAdapter
         {
             e.printStackTrace();
         }
-    }
-
-    private void checkForWin(int z, int y, int x)
-    {
-        Position exitPosition = maze3d.getExitPosition();
-
-        Position position = new Position(z,x,y);
-
-        if(exitPosition.equals(position))
-        {
-            Shell shell = canvas.getShell();
-            canvas.dispose();
-
-            WinWindow winWindow = new WinWindow(300,400);
-        }
-        else
-        {
-            canvas.redraw();
-        }
-    }
-
-    private void print(int[][] mazeData)
-    {
-        if (isF)
-        {
-            for (int[] aCrossSelection : mazeData)
-            {
-                System.out.printf("{");
-                for (int anACrossSelection : aCrossSelection)
-                {
-                    System.out.printf(anACrossSelection + ",");
-                }
-                System.out.printf("}");
-                System.out.printf("\n");
-            }
-
-            isF = false;
-        }
-
     }
 }

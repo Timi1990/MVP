@@ -1,19 +1,17 @@
 package notifications;
 
-/**
- * Created by Timi on 9/28/2015.
- */
-public class DisplayCrossSelectionNotification extends ObservableNotification {
+public class DisplayCrossSelectionNotification implements ObservableNotification
+{
+    private final int[][] crossSelection;
 
-    private int[][] crossSelection;
-
-
-    public DisplayCrossSelectionNotification() {
-        super(ObservableNotificationNames.DisplayCrossSelectionName);
+    public DisplayCrossSelectionNotification(int[][] crossSelection)
+    {
+        this.crossSelection = crossSelection;
     }
 
     @Override
-    public void print() {
+    public void print()
+    {
         for (int[] aCrossSelection : crossSelection)
         {
             System.out.printf("{");
@@ -24,13 +22,5 @@ public class DisplayCrossSelectionNotification extends ObservableNotification {
             System.out.printf("}");
             System.out.printf("\n");
         }
-    }
-
-    public int[][] getCrossSelection() {
-        return crossSelection;
-    }
-
-    public void setCrossSelection(int[][] crossSelection) {
-        this.crossSelection = crossSelection;
     }
 }

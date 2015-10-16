@@ -22,6 +22,7 @@ public class HelpSelectionListener extends SelectionAdapter
     private final Maze3d maze3d;
     private final GameCharacter gameCharacter;
     private final Canvas canvas;
+    private GameHandler gameHandler;
 
     public HelpSelectionListener(Astar astar, Maze3d maze3d, GameCharacter gameCharacter, Canvas canvas)
     {
@@ -29,6 +30,8 @@ public class HelpSelectionListener extends SelectionAdapter
         this.maze3d = maze3d;
         this.gameCharacter = gameCharacter;
         this.canvas = canvas;
+
+        gameHandler = new GameHandler(maze3d);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class HelpSelectionListener extends SelectionAdapter
 
         final ArrayList<State> solutionList = search.getSolutionList();
 
-        TimerTask task = new TimerTask()
+        final TimerTask task = new TimerTask()
         {
             @Override
             public void run()
@@ -50,18 +53,31 @@ public class HelpSelectionListener extends SelectionAdapter
                     {
                         int i = solutionList.size() - 1;
 
-                        Maze3dState maze3dState = (Maze3dState) solutionList.get(i);
+                        if(i >= 0)
+                        {
+                            Maze3dState maze3dState = (Maze3dState) solutionList.get(i);
 
-                        Position position = maze3dState.getPosition();
-                        gameCharacter.setPosition(position);
+                            Position position = maze3dState.getPosition();
+                            int x = position.getX();
+                            int y = position.getY();
+                            int z = position.getZ();
 
-                        canvas.redraw();
+                            gameCharacter.setX(x);
+                            gameCharacter.setY(y);
+                            gameCharacter.setZ(z);
 
-                        solutionList.remove(i);
+                            canvas.redraw();
+
+                            solutionList.remove(i);
+                            gameHandler.checkForWin(z, y, x);
+                        }
+                        else
+                        {
+                            timer.cancel();
+                        }
                     }
                 });
             }
-
         };
 
         timer.scheduleAtFixedRate(task, 0, 500);

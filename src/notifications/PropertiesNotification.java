@@ -2,23 +2,23 @@ package notifications;
 
 import presenter.Properties;
 
-/**
- * Created by Timi on 10/2/2015.
- */
-public class PropertiesNotification extends ObservableNotification {
+public class PropertiesNotification implements ObservableNotification
+{
+    private final Properties properties;
 
-    private Properties properties;
-    public PropertiesNotification(Properties properties) {
-        super(ObservableNotificationNames.PropertiesName);
+    public PropertiesNotification(Properties properties)
+    {
         this.properties = properties;
     }
 
     @Override
-    public void print() {
+    public void print()
+    {
 
     }
 
-    public Properties getProperties() {
+    public Properties getProperties()
+    {
         return properties;
     }
 }

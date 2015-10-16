@@ -1,16 +1,10 @@
 package notifications;
 
-/**
- * Created by Timi on 9/30/2015.
- */
-public class DisplayMazeExistsNotification extends ObservableNotification {
-
-    public DisplayMazeExistsNotification() {
-        super(ObservableNotificationNames.DisplayMazeExistsName);
-    }
-
+public class DisplayMazeExistsNotification implements ObservableNotification
+{
     @Override
-    public void print() {
+    public void print()
+    {
         System.out.println(ObservableNotificationNames.DisplayMazeExistsName);
     }
 }

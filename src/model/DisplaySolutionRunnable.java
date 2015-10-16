@@ -3,30 +3,24 @@ package model;
 import algorithms.mazeGenerators.Maze3d;
 import notifications.DisplaySolutionNotification;
 
-import java.util.concurrent.Callable;
+public class DisplaySolutionRunnable implements Runnable
+{
+    private final MazeModel model;
+    private final String mazeName;
 
-/**
- * Created by Timi on 9/28/2015.
- */
-public class DisplaySolutionCall implements Callable {
-
-    private MazeModel model;
-    private String mazeName;
-
-    public DisplaySolutionCall(MazeModel model, String mazeName) {
+    public DisplaySolutionRunnable(MazeModel model, String mazeName)
+    {
         this.model = model;
         this.mazeName = mazeName;
     }
 
     @Override
-    public Object call() throws Exception {
-
+    public void run()
+    {
         Maze3d maze = model.getMazeByName(mazeName);
 
         DisplaySolutionNotification displaySolutionNotification = new DisplaySolutionNotification(model.getSolutionByMaze(maze));
 
         model.notifyObservers(displaySolutionNotification);
-
-        return null;
     }
 }

@@ -9,35 +9,33 @@ import notifications.SolveMazeNotification;
 
 import java.util.concurrent.Callable;
 
-/**
- * Created by Timi on 9/28/2015.
- */
-public class SolveMazeCall implements Callable<Solution> {
+public class SolveMazeCall implements Callable<Solution>
+{
+    private final String mazeName;
+    private final MazeModel model;
 
-    private String mazeName;
-    private MazeModel model;
-
-    public SolveMazeCall(String mazeName,MazeModel model) {
+    public SolveMazeCall(String mazeName, MazeModel model)
+    {
         this.mazeName = mazeName;
         this.model = model;
     }
 
-
     @Override
-    public Solution call() throws Exception {
+    public Solution call() throws Exception
+    {
+        Maze3d maze = model.getMazeByName(mazeName);
 
-            Maze3d maze=model.getMazeByName(mazeName);
+        Searchable searchable = new Maze3dDomain(maze);
 
-            Searchable searchable=new Maze3dDomain(maze);
+        Searcher searcher = model.getSearcher();
 
-            Searcher searcher = model.getSearcher();
-        
-            Solution solution = searcher.search(searchable);
+        Solution solution = searcher.search(searchable);
 
-            SolveMazeNotification solveMazeNotification = new SolveMazeNotification(searcher.getClass().toString().substring(24),mazeName);
+        SolveMazeNotification solveMazeNotification =
+                new SolveMazeNotification(searcher.getClass().getSimpleName(), mazeName);
 
-            model.notifyObservers(solveMazeNotification);
+        model.notifyObservers(solveMazeNotification);
 
-            return solution;
+        return solution;
     }
 }
