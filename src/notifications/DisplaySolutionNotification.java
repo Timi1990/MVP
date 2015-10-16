@@ -2,22 +2,18 @@ package notifications;
 
 import algorithms.search.Solution;
 
-/**
- * Created by Timi on 9/28/2015.
- */
-public class DisplaySolutionNotification extends ObservableNotification {
+public class DisplaySolutionNotification implements ObservableNotification
+{
+    private final Solution solution;
 
-    private Solution solution;
-
-    public DisplaySolutionNotification(Solution solution) {
-
-        super(ObservableNotificationNames.DisplaySolutionName);
+    public DisplaySolutionNotification(Solution solution)
+    {
         this.solution = solution;
     }
 
     @Override
-    public void print() {
-
+    public void print()
+    {
         System.out.print("Displaying solution: ");
 
         solution.printSolution();

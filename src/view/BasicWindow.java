@@ -13,7 +13,6 @@ public abstract class BasicWindow extends Observable implements Runnable, BasicW
 {
     protected Display display = Display.getDefault();
     protected Shell shell = new Shell(display);
-    protected String filePath;
 
     BasicWindow(int width, int height)
     {
@@ -58,9 +57,4 @@ public abstract class BasicWindow extends Observable implements Runnable, BasicW
     public abstract Canvas getCanvas();
 
     public abstract void setBackGround(Color backGround);
-
-    public String getFilePath()
-    {
-        return filePath;
-    }
 }

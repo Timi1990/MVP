@@ -2,6 +2,7 @@ package model;
 
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
+import algorithms.mazeGenerators.MazeArgumentsForInit;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import boot.GlobalThreadPool;
@@ -19,256 +20,274 @@ import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class MazeModel extends Observable implements IModel {
+public class MazeModel extends Observable implements IModel
+{
+    private HashMap<Maze3d, Solution> mazeAndSolution = new HashMap<Maze3d, Solution>();
+    private HashMap<String, Maze3d> mazeAndName = new HashMap<String, Maze3d>();
+    private Maze3dGenerator mazeGenerator;
+    private Searcher searcher;
 
-	private HashMap<Maze3d, Solution> mazeAndSolution = new HashMap<Maze3d, Solution>();
-	private HashMap<String, Maze3d> mazeAndName = new HashMap<String, Maze3d>();
-	private Maze3dGenerator mazeGenerator;
-	private Searcher searcher;
+    @Override
+    public Maze3d getMazeByName(String mazeName)
+    {
+        return mazeAndName.get(mazeName);
+    }
 
+    @Override
+    public Solution getSolutionByName(String mazeName)
+    {
 
-	@Override
-	public Maze3d getMazeByName(String mazeName) {
-		return mazeAndName.get(mazeName);
-	}
+        return mazeAndSolution.get(mazeName);
+    }
 
-	@Override
-	public Solution getSolutionByName(String mazeName) {
+    public Searcher getSearcher()
+    {
+        return searcher;
+    }
 
-		return mazeAndSolution.get(mazeName);
-	}
+    public Maze3dGenerator getMazeGenerator()
+    {
+        return mazeGenerator;
+    }
 
-	public Searcher getSearcher() {
-		return searcher;
-	}
+    @Override
+    public void generateMaze(String mazeName, Integer dimension, Integer rows, Integer columns) throws Exception
+    {
+        setChanged();
 
-	public Maze3dGenerator getMazeGenerator() {
-		return mazeGenerator;
-	}
+        if (mazeAndName.containsKey(mazeName))
+        {
+            DisplayMazeExistsNotification displayMazeExistsNotification = new DisplayMazeExistsNotification();
 
-	@Override
-	public void generateMaze(String mazeName, Integer dimension, Integer rows, Integer columns) throws Exception {
-		this.setChanged();
+            notifyObservers(displayMazeExistsNotification);
 
-		if(mazeAndName.containsKey(mazeName)) {
+        } else
+        {
+            MazeArgumentsForInit mazeArgumentsForInit = new MazeArgumentsForInit(dimension, rows, columns);
 
-			DisplayMazeExistsNotification displayMazeExistsNotification = new DisplayMazeExistsNotification();
+            GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeName, mazeArgumentsForInit, this);
 
-			notifyObservers(displayMazeExistsNotification);
+            Future<Maze3d> future = GlobalThreadPool.getInstance().addCallableToPool(generateMazeCall);
 
-		}
-		else
-		{
-			GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeName, dimension, rows, columns, this);
+            Maze3d maze = future.get();
 
-			Future<Maze3d> future = GlobalThreadPool.getInstance().addCallableToPool(generateMazeCall);
+            mazeAndName.put(mazeName, maze);
+        }
+    }
 
-			Maze3d maze = future.get();
+    @Override
+    public void displayMaze(String mazeName) throws Exception
+    {
+        setChanged();
 
-			mazeAndName.put(mazeName, maze);
+        DisplayMazeRunnable displayMazeRunnable = new DisplayMazeRunnable(mazeName, this);
 
-		}
-	}
+        Future<?> future = GlobalThreadPool.getInstance().addRunnableToPool(displayMazeRunnable);
 
-	@Override
-	public void displayMaze(String mazeName) throws Exception {
+        future.get();
+    }
 
-		setChanged();
+    @Override
+    public void getCrossSelectionBy(String axis, String mazeName, Integer index) throws Exception
+    {
+        setChanged();
 
-		DisplayMazeCall displayMazeCall = new DisplayMazeCall(mazeName, this);
+        if (mazeAndName.containsKey(mazeName))
+        {
+            Maze3d maze = getMazeByName(mazeName);
 
-		Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(displayMazeCall);
+            DisplayCrossSelectionRunnable displayCrossSelectionRunnable = new DisplayCrossSelectionRunnable(this, axis, maze, index);
 
-		future.get();
-	}
+            Future<?> future = GlobalThreadPool.getInstance().addRunnableToPool(displayCrossSelectionRunnable);
 
-	@Override
-	public void getCrossSelectionBy(String axis, String mazeName, Integer index) throws Exception {
-		setChanged();
-		if (mazeAndName.containsKey(mazeName)) {
-			Maze3d maze = getMazeByName(mazeName);
+            future.get();
+        }
+    }
 
-			DisplayCrossSelectionCall displayCrossSelectionCall = new DisplayCrossSelectionCall(this, axis, maze, index);
+    @Override
+    public void save(String filePath, String mazeName) throws Exception
+    {
+        setChanged();
 
-			Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(displayCrossSelectionCall);
+        if (mazeAndName.containsKey(mazeName))
+        {
+            SaveMazeRunnable saveMazeRunnable = new SaveMazeRunnable(new MyCompressorOutputStream(new FileOutputStream(filePath)), mazeName, this);
 
-			future.get();
-		}
-	}
+            Future<?> future = GlobalThreadPool.getInstance().addRunnableToPool(saveMazeRunnable);
 
-	@Override
-	public void save(String filePath, String mazeName) throws Exception {
-		setChanged();
-		if(mazeAndName.containsKey(mazeName)) {
-			SaveMazeCall saveMazeCall = new SaveMazeCall(new MyCompressorOutputStream(new FileOutputStream(filePath)), mazeName, this);
+            future.get();
+        }
+    }
 
-			Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(saveMazeCall);
+    @Override
+    public void load(String filePath, String mazeName) throws Exception
+    {
+        setChanged();
 
-			future.get();
+        LoadMazeRunnable loadMazeRunnable = new LoadMazeRunnable(this, filePath, mazeName);
 
-		}
-	}
+        Future<?> future = GlobalThreadPool.getInstance().addRunnableToPool(loadMazeRunnable);
 
-	@Override
-	public void load(String filePath, String mazeName) throws Exception {
+        future.get();
+    }
 
-		setChanged();
-		LoadMazeCall loadMazeCall = new LoadMazeCall(this,filePath,mazeName);
+    @Override
+    public void putMazeAndName(String mazeName, Maze3d maze)
+    {
+        mazeAndName.put(mazeName, maze);
+    }
 
-		Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(loadMazeCall);
+    @Override
+    public void solve(String name) throws Exception
+    {
 
-		future.get();
-	}
+        setChanged();
 
-	@Override
-	public void putMazeAndName(String mazeName, Maze3d maze) {
-		mazeAndName.put(mazeName,maze);
-	}
+        if (mazeAndName.containsKey(name))
+        {
+            if (mazeAndSolution.containsKey(mazeAndName.get(name)))
+            {
+                DisplayMazeExistsNotification displayMazeExistsNotification = new DisplayMazeExistsNotification();
 
-	@Override
-	public void solve(String name) throws Exception {
+                notifyObservers(displayMazeExistsNotification);
+            } else
+            {
+                SolveMazeCall solveMazeCall = new SolveMazeCall(name, this);
 
-		setChanged();
+                Future<Solution> future = GlobalThreadPool.getInstance().addCallableToPool(solveMazeCall);
 
-		if(mazeAndName.containsKey(name))
-		{
-			if(mazeAndSolution.containsKey(mazeAndName.get(name)))
-			{
-				DisplayMazeExistsNotification displayMazeExistsNotification = new DisplayMazeExistsNotification();
+                Solution solution = future.get();
 
-				notifyObservers(displayMazeExistsNotification);
-			}
-			else {
-				SolveMazeCall solveMazeCall = new SolveMazeCall(name,this);
+                mazeAndSolution.put(mazeAndName.get(name), solution);
+            }
+        }
 
-				Future<Solution> future = GlobalThreadPool.getInstance().addCallableToPool(solveMazeCall);
+    }
 
-				Solution solution = future.get();
+    @Override
+    public void putMazeAndSolution(Maze3d maze, Solution solution)
+    {
+        mazeAndSolution.put(maze, solution);
+    }
 
-				mazeAndSolution.put(mazeAndName.get(name), solution);
-			}
-		}
+    @Override
+    public void displaySolution(String mazeName) throws Exception
+    {
+        setChanged();
 
-	}
+        DisplaySolutionRunnable displaySolutionRunnable = new DisplaySolutionRunnable(this, mazeName);
 
-	@Override
-	public void putMazeAndSolution(Maze3d maze, Solution solution) {
-		mazeAndSolution.put(maze,solution);
-	}
+        Future<?> future = GlobalThreadPool.getInstance().addRunnableToPool(displaySolutionRunnable);
 
-	@Override
-	public void displaySolution(String mazeName) throws Exception {
+        future.get();
+    }
 
-		setChanged();
+    @Override
+    public void fileSize(String mazeName) throws Exception
+    {
+        setChanged();
 
-		DisplaySolutionCall displaySolutionCall = new DisplaySolutionCall(this,mazeName);
+        if (mazeAndName.containsKey(mazeName))
+        {
+            FileSizeRunnable fileSizeRunnable = new FileSizeRunnable(this, mazeName);
 
-		Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(displaySolutionCall);
+            Future<?> future = GlobalThreadPool.getInstance().addRunnableToPool(fileSizeRunnable);
 
-		future.get();
+            future.get();
+        }
+    }
 
+    @Override
+    public void saveSolutionsBeforeExit() throws IOException
+    {
 
-	}
+        Scanner scanner = new Scanner(System.in);
+        String filePath;
 
-	@Override
-	public void fileSize(String mazeName) throws Exception {
+        System.out.println("Enter path to save maze's solutions");
+        filePath = scanner.next();
 
-		setChanged();
+        ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filePath)));
 
-		if(mazeAndName.containsKey(mazeName))
-		{
-			FileSizeCall fileSizeCall = new FileSizeCall(this,mazeName);
+        out.writeObject(mazeAndSolution);
+        out.flush();
+        out.close();
+    }
 
-			Future<Object> future = GlobalThreadPool.getInstance().addCallableToPool(fileSizeCall);
+    @Override
+    public HashMap<Maze3d, Solution> loadSolutionsForMazes() throws IOException, ClassNotFoundException
+    {
 
-			future.get();
-		}
-	}
+        Scanner scanner = new Scanner(System.in);
+        String filePath;
 
-	@Override
-	public void saveSolutionsBeforeExit() throws IOException {
+        System.out.println("Enter path(.gz) to load from solutions:");
+        filePath = scanner.next();
 
-		Scanner scanner = new Scanner(System.in);
-		String filePath;
+        ObjectInputStream in = new ObjectInputStream(new GZIPInputStream((new FileInputStream(filePath))));
 
-		System.out.println("Enter path to save maze's solutions");
-		filePath=scanner.next();
+        HashMap<Maze3d, Solution> hm = new HashMap<Maze3d, Solution>();
 
-		ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filePath)));
+        hm = (HashMap<Maze3d, Solution>) in.readObject();
 
-		out.writeObject(mazeAndSolution);
-		out.flush();
-		out.close();
-	}
+        return hm;
 
-	@Override
-	public HashMap<Maze3d,Solution> loadSolutionsForMazes() throws IOException, ClassNotFoundException {
+    }
 
-		Scanner scanner = new Scanner(System.in);
-		String filePath;
+    @Override
+    public void setMazeAndSolutionMap(HashMap<Maze3d, Solution> hm)
+    {
+        this.mazeAndSolution = hm;
+    }
 
-		System.out.println("Enter path(.gz) to load from solutions:");
-		filePath = scanner.next();
+    @Override
+    public void exit() throws IOException
+    {
+        saveSolutionsBeforeExit();
+        System.out.println("Exiting...");
+        System.exit(1);
+    }
 
-		ObjectInputStream in = new ObjectInputStream(new GZIPInputStream((new FileInputStream(filePath))));
+    @Override
+    public void setMazeGenerator(Maze3dGenerator mazeGenerator)
+    {
+        this.mazeGenerator = mazeGenerator;
+    }
 
-		HashMap<Maze3d,Solution> hm = new HashMap<Maze3d,Solution>();
+    @Override
+    public void setSearcher(Searcher searcher)
+    {
+        this.searcher = searcher;
+    }
 
-		hm = (HashMap<Maze3d, Solution>) in.readObject();
 
-		return hm;
+    public Solution getSolutionByMaze(Maze3d maze)
+    {
+        if (mazeAndSolution.containsKey(maze))
+            return mazeAndSolution.get(maze);
+        else
+            return null;
+    }
 
-	}
+    @Override
+    public void setProperties(String filePath)
+    {
+        this.setChanged();
+        XMLDecoder xmlDecoder = null;
+        try
+        {
+            xmlDecoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(filePath)));
+        } catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
 
-	@Override
-	public void setMazeAndSolutionMap(HashMap<Maze3d, Solution> hm) {
-		this.mazeAndSolution = hm;
-	}
+        Properties properties = (Properties) xmlDecoder.readObject();
 
-	@Override
-	public void exit() throws IOException {
-		saveSolutionsBeforeExit();
-		System.out.println("Exiting...");
-		System.exit(1);
-	}
+        xmlDecoder.close();
 
-	@Override
-	public void setMazeGenerator(Maze3dGenerator mazeGenerator) {
-		this.mazeGenerator = mazeGenerator;
-	}
+        PropertiesNotification propertiesNotification = new PropertiesNotification(properties);
 
-	@Override
-	public void setSearcher(Searcher searcher) {
-		this.searcher = searcher;
-	}
-
-
-
-	public Solution getSolutionByMaze(Maze3d maze)
-	{
-		if(mazeAndSolution.containsKey(maze))
-			return mazeAndSolution.get(maze);
-		else
-			return null;
-	}
-
-	@Override
-	public void setProperties(String filePath) {
-		this.setChanged();
-		XMLDecoder xmlDecoder = null;
-		try {
-			xmlDecoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(filePath)));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		Properties properties = (Properties)xmlDecoder.readObject();
-
-		xmlDecoder.close();
-
-		PropertiesNotification propertiesNotification = new PropertiesNotification(properties);
-
-		notifyObservers(propertiesNotification);
-	}
+        notifyObservers(propertiesNotification);
+    }
 }
-

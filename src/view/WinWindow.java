@@ -39,8 +39,6 @@ public class WinWindow extends BasicWindow
         Button button1 = new Button(shell, SWT.PUSH);
         button1.setText("חזרה לתפריט הראשי");
         button1.setLayoutData(gridData);
-
-        shell.pack();
     }
 
 

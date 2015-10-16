@@ -4,23 +4,20 @@ import model.IModel;
 
 import java.util.List;
 
-/**
- * Created by Timi on 9/28/2015.
- */
-public class DisplaySolutionCommand implements Command {
+public class DisplaySolutionCommand implements Command
+{
+    private final IModel model;
 
-    private IModel model;
-
-    public DisplaySolutionCommand(IModel model) {
+    public DisplaySolutionCommand(IModel model)
+    {
         this.model = model;
     }
 
     @Override
-    public void doCommand(List<String> args) throws Exception {
-
-        String name=args.get(0);
+    public void doCommand(List<String> args) throws Exception
+    {
+        String name = args.get(0);
 
         model.displaySolution(name);
-
     }
 }

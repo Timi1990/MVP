@@ -1,135 +1,111 @@
 package view;
 
+import algorithms.mazeGenerators.*;
 import notifications.ObservableNotification;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.*;
-import presenter.Command;
 
-import java.util.HashMap;
-
-/**
- * Created by Timi on 10/1/2015.
- */
-public class MazeGUIView extends BasicWindow implements IView{
-
-    private Label label;
-
-    private Menu menuBar,fileMenu,helpMenu,openSubMenu;
-
-    private MenuItem fileMenuHeader,helpMenuHeader;
-
-    private MenuItem fileExitItem,fileSaveItem,helpGetHelpItem,openItem,openProperties,runMazeItem;
-
+public class MazeMenu extends BasicWindow implements IView
+{
+    private Menu menuBar;
     private boolean initialized = false;
 
-    private Button button;
-
-
-
-    public MazeGUIView(int width, int height) {
-        super(width,height);
-
+    public MazeMenu(int width, int height)
+    {
+        super(width, height);
+        menuBar = new Menu(shell, SWT.BAR);
     }
 
     @Override
-    public void init() {
-
-        menuBar = new Menu(shell,SWT.BAR);
-
-        fileMenuHeader = new MenuItem(menuBar,SWT.CASCADE);  //cascade??
+    public void init()
+    {
+        MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
         fileMenuHeader.setText("File");  //??
 
-        fileMenu = new Menu(shell,SWT.DROP_DOWN);
+        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
         fileMenuHeader.setMenu(fileMenu);
 
-        openItem = new MenuItem(fileMenu,SWT.CASCADE);
+        MenuItem openItem = new MenuItem(fileMenu, SWT.CASCADE);
         openItem.setText("Open");
 
-
-        openSubMenu = new Menu(shell,SWT.DROP_DOWN);
+        Menu openSubMenu = new Menu(shell, SWT.DROP_DOWN);
         openItem.setMenu(openSubMenu);
 
-        openProperties = new MenuItem(openSubMenu,SWT.PUSH);
+        MenuItem openProperties = new MenuItem(openSubMenu, SWT.PUSH);
         openProperties.setText("Load Properties\t(CTRL+O)");
         openProperties.setAccelerator(SWT.CTRL + 'O');
 
-        runMazeItem = new MenuItem(fileMenu,SWT.PUSH);
+        MenuItem runMazeItem = new MenuItem(fileMenu, SWT.PUSH);
         runMazeItem.setText("Start game\t(CTRL+P)");
         runMazeItem.setAccelerator(SWT.CTRL+'P');
 
-        fileSaveItem = new MenuItem(fileMenu,SWT.PUSH);
+        MenuItem fileSaveItem = new MenuItem(fileMenu, SWT.PUSH);
         fileSaveItem.setText("Save\t(CTRL+S)");
         fileSaveItem.setAccelerator(SWT.CTRL + 'S');
 
-        fileExitItem = new MenuItem(fileMenu,SWT.PUSH);
+        MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("Exit");
 
-        helpMenuHeader = new MenuItem(menuBar,SWT.CASCADE);
+        MenuItem helpMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
         helpMenuHeader.setText("Help");
 
-        helpMenu = new Menu(shell,SWT.DROP_DOWN);
+        Menu helpMenu = new Menu(shell, SWT.DROP_DOWN);
         helpMenuHeader.setMenu(helpMenu);
 
-        helpGetHelpItem = new MenuItem(helpMenu,SWT.PUSH);
+        MenuItem helpGetHelpItem = new MenuItem(helpMenu, SWT.PUSH);
         helpGetHelpItem.setText("Get help");
 
-        button=new Button(shell,SWT.PUSH|SWT.BORDER);
+        final Button button = new Button(shell, SWT.PUSH | SWT.BORDER);
         button.setText("bla");
         shell.setMenuBar(menuBar);
         button.pack();
 
-        button.addSelectionListener(new SelectionAdapter()
+        runMazeItem.addSelectionListener(new SelectionAdapter()
         {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent)
             {
-                MazeWindow mazeWindow = new MazeWindow(500, 500);
-
-                Maze3dGenerator maze3dGenerator = new MyMaze3dGenerator();
-
-                Maze3d maze3d = maze3dGenerator.generate(new MazeArgumentsForInit(7, 6, 8));
-
-                Position startPosition = maze3d.getStartPosition();
-
-                Image ball = new Image(display, "images/ball.gif");
-
-                GameCharacter gameCharacter = new GameCharacter(startPosition, ball);
-
-                Canvas canvas = mazeWindow.getCanvas();
-
-                mazeWindow.addKeyListener(new MazeKeyListener(gameCharacter, canvas, maze3d));
-                mazeWindow.addPaintListener(new MazePaintListener(canvas, maze3d, gameCharacter));
-
-                mazeWindow.run();
-            }
-        });
-
-
-        runMazeItem.addSelectionListener(new SelectionListener()
-        {
-            @Override
-            public void widgetSelected(SelectionEvent selectionEvent) {
-                if (initialized == false) {
+                if (! initialized)
+                {
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
                     messageBox.setText("Error");
                     messageBox.setMessage("You must load game properties first..");
                     display.beep();
                     messageBox.open();
-                }
-                else if(initialized ==true)
+                } else
                 {
-                    Shell startGameShell = new Shell(display,SWT.APPLICATION_MODAL
-                            | SWT.DIALOG_TRIM);
-                    startGameShell.open();
+
+                    MazeWindow mazeWindow = new MazeWindow(500, 500);
+
+                    Maze3dGenerator maze3dGenerator = new MyMaze3dGenerator();
+
+                    Maze3d maze3d = maze3dGenerator.generate(new MazeArgumentsForInit(7, 6, 8));
+
+                    Position startPosition = maze3d.getStartPosition();
+
+                    Image ball = new Image(display, "images/ball.gif");
+
+                    GameCharacter gameCharacter = new GameCharacter(startPosition, ball);
+
+                    Canvas canvas = mazeWindow.getCanvas();
+
+                    mazeWindow.addKeyListener(new MazeKeyListener(gameCharacter, canvas, maze3d));
+                    mazeWindow.addPaintListener(new MazePaintListener(canvas, maze3d, gameCharacter));
+
+                    Button button1 = new Button(mazeWindow.shell, SWT.PUSH | SWT.BORDER);
+
+                    button1.setText("help");
+
+                    HelpSelectionListener selectionListener =
+                            new HelpSelectionListener(new Astar(new MazeManhattanDistance()), maze3d, gameCharacter, canvas);
+                    button1.addSelectionListener(selectionListener);
+
+                    button1.pack();
+
+                    mazeWindow.run();
                 }
-
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent selectionEvent) {
-
             }
         });
         fileExitItem.addSelectionListener(new SelectionListener() {
@@ -190,10 +166,13 @@ public class MazeGUIView extends BasicWindow implements IView{
                 String[] filters = {"*.xml"};
                 fileDialog.setFilterExtensions(filters);
                 String properties = fileDialog.open();
-                if(properties!=null){
-                filePath = properties;
-                initialized=true;
-                notifyObservers(filePath);}
+                //TO DO-Load properties via model
+
+
+                if (properties != null)
+                {
+                    initialized = true;
+                }
             }
 
             @Override
@@ -212,6 +191,10 @@ public class MazeGUIView extends BasicWindow implements IView{
     @Override
     public void notifyFromReader(String notify) {
 
+    @Override
+    public void setBackGround(Color backGround)
+    {
+        //todo: check if need canvas
     }
 
     @Override

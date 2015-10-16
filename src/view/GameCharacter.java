@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class GameCharacter
 {
-    private Position position;
+    private final Position position;
     private final Image image;
 
     public GameCharacter(Position startPosition, Image image)

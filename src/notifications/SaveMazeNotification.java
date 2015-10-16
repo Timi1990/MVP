@@ -1,11 +1,8 @@
 package notifications;
 
-/**
- * Created by Timi on 9/28/2015.
- */
-public class SaveMazeNotification extends ObservableNotification {
+public class SaveMazeNotification implements ObservableNotification {
 
-    private String mazeName;
+    private final String mazeName;
 
     public SaveMazeNotification(String mazeName) {
         this.mazeName = mazeName;
