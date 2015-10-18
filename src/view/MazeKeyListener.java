@@ -7,8 +7,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Canvas;
 
-public class MazeKeyListener extends KeyAdapter
-{
+public class MazeKeyListener extends KeyAdapter {
     private final GameCharacter gameCharacter;
     private final Canvas canvas;
     private final Maze3d maze3d;
@@ -24,22 +23,17 @@ public class MazeKeyListener extends KeyAdapter
     }
 
     @Override
-    public void keyPressed(KeyEvent keyEvent)
-    {
+    public void keyPressed(KeyEvent keyEvent) {
         int x = gameCharacter.getX();
         int y = gameCharacter.getY();
         int z = gameCharacter.getZ();
 
-        try
-        {
+        try {
             int[][] mazeData = maze3d.getCrossSectionByZ(z);
 
-            switch (keyEvent.keyCode)
-            {
-                case SWT.ARROW_RIGHT:
-                {
-                    if (mazeData[y][x + 1] != 1)
-                    {
+            switch (keyEvent.keyCode) {
+                case SWT.ARROW_RIGHT: {
+                    if (mazeData[y][x + 1] != 1) {
                         gameCharacter.setX(x + 1);
 
                         gameHandler.checkForWin(z, y, x + 1);
@@ -49,10 +43,8 @@ public class MazeKeyListener extends KeyAdapter
                     break;
 
                 }
-                case SWT.ARROW_LEFT:
-                {
-                    if (x != 0 && mazeData[y][x - 1] != 1)
-                    {
+                case SWT.ARROW_LEFT: {
+                    if (x != 0 && mazeData[y][x - 1] != 1) {
                         gameCharacter.setX(x - 1);
 
                         gameHandler.checkForWin(z, y, x - 1);
@@ -61,10 +53,8 @@ public class MazeKeyListener extends KeyAdapter
                     }
                     break;
                 }
-                case SWT.ARROW_DOWN:
-                {
-                    if (mazeData[y + 1][x] != 1)
-                    {
+                case SWT.ARROW_DOWN: {
+                    if (mazeData[y + 1][x] != 1) {
                         gameCharacter.setY(y + 1);
 
                         gameHandler.checkForWin(z, y + 1, x);
@@ -73,10 +63,8 @@ public class MazeKeyListener extends KeyAdapter
                     }
                     break;
                 }
-                case SWT.ARROW_UP:
-                {
-                    if (mazeData[y - 1][x] != 1)
-                    {
+                case SWT.ARROW_UP: {
+                    if (mazeData[y - 1][x] != 1) {
                         gameCharacter.setY(y - 1);
 
                         gameHandler.checkForWin(z, y - 1, x);
@@ -85,14 +73,11 @@ public class MazeKeyListener extends KeyAdapter
                     }
                     break;
                 }
-                case SWT.PAGE_UP:
-                {
-                    if (z + 1 < maze3d.getDimension())
-                    {
+                case SWT.PAGE_UP: {
+                    if (z + 1 < maze3d.getDimension()) {
                         int[][] crossSectionByZ = maze3d.getCrossSectionByZ(z + 1);
 
-                        if (crossSectionByZ[y][x] == 0)
-                        {
+                        if (crossSectionByZ[y][x] == 0) {
                             gameCharacter.setZ(z + 1);
 
                             gameHandler.checkForWin(z + 1, y, x);
@@ -103,14 +88,11 @@ public class MazeKeyListener extends KeyAdapter
                     }
                     break;
                 }
-                case SWT.PAGE_DOWN:
-                {
-                    if (z - 1 >= 0)
-                    {
+                case SWT.PAGE_DOWN: {
+                    if (z - 1 >= 0) {
                         int[][] crossSectionByZ = maze3d.getCrossSectionByZ(z - 1);
 
-                        if (crossSectionByZ[y][x] == 0)
-                        {
+                        if (crossSectionByZ[y][x] == 0) {
                             gameCharacter.setZ(z - 1);
 
                             gameHandler.checkForWin(z - 1, y, x);
@@ -121,8 +103,7 @@ public class MazeKeyListener extends KeyAdapter
                     break;
                 }
             }
-        } catch (IndexOutOfBoundsException e)
-        {
+        } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
     }

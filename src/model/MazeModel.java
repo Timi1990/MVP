@@ -1,19 +1,17 @@
 package model;
 
-import algorithms.mazeGenerators.Maze3d;
-import algorithms.mazeGenerators.Maze3dGenerator;
-import algorithms.mazeGenerators.MazeArgumentsForInit;
-import algorithms.search.Searcher;
-import algorithms.search.Solution;
+import algorithms.mazeGenerators.*;
+import algorithms.search.*;
 import boot.GlobalThreadPool;
 import io.MyCompressorOutputStream;
 import notifications.DisplayMazeExistsNotification;
-import notifications.PropertiesNotification;
+import notifications.ObservableNotification;
 import presenter.Properties;
 
 import java.beans.XMLDecoder;
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Scanner;
 import java.util.concurrent.Future;
@@ -26,6 +24,17 @@ public class MazeModel extends Observable implements IModel
     private HashMap<String, Maze3d> mazeAndName = new HashMap<String, Maze3d>();
     private Maze3dGenerator mazeGenerator;
     private Searcher searcher;
+    private ObservableNotification notification;
+
+    @Override
+    public ObservableNotification getNotification() {
+        return notification;
+    }
+
+    @Override
+    public void setNotification(ObservableNotification notification) {
+        this.notification = notification;
+    }
 
     @Override
     public Maze3d getMazeByName(String mazeName)
@@ -65,13 +74,14 @@ public class MazeModel extends Observable implements IModel
         {
             MazeArgumentsForInit mazeArgumentsForInit = new MazeArgumentsForInit(dimension, rows, columns);
 
-            GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeName, mazeArgumentsForInit, this);
+            GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeName,mazeArgumentsForInit,this);
 
             Future<Maze3d> future = GlobalThreadPool.getInstance().addCallableToPool(generateMazeCall);
 
             Maze3d maze = future.get();
 
             mazeAndName.put(mazeName, maze);
+
         }
     }
 
@@ -272,7 +282,7 @@ public class MazeModel extends Observable implements IModel
     @Override
     public void setProperties(String filePath)
     {
-        this.setChanged();
+        setChanged();
         XMLDecoder xmlDecoder = null;
         try
         {
@@ -286,8 +296,32 @@ public class MazeModel extends Observable implements IModel
 
         xmlDecoder.close();
 
-        PropertiesNotification propertiesNotification = new PropertiesNotification(properties);
+        List<String> propertiesList = properties.getPropertiesList();
 
-        notifyObservers(propertiesNotification);
+        HashMap<String, Searcher> searcherFactory = new HashMap<String, Searcher>();
+        HashMap<String, Maze3dGenerator> generatorsFactory = new HashMap<String, Maze3dGenerator>();
+
+        searcherFactory.put("BFS", new BFS());
+        searcherFactory.put("Astar", new Astar(new MazeManhattanDistance()));
+        generatorsFactory.put("Simple maze generator", new SimpleMaze3dGenerator());
+        generatorsFactory.put("My maze generator", new MyMaze3dGenerator());
+
+        Integer numOfThreads = Integer.decode(propertiesList.get(0));
+        GlobalThreadPool.getInstance().setAndCreateNumOfThreads(numOfThreads);
+
+        String searcherName = propertiesList.get(1);
+        String generator = propertiesList.get(2);
+        String viewProp = propertiesList.get(3);
+
+        if (generatorsFactory.containsKey(generator) && searcherFactory.containsKey(searcherName))
+        {
+            setMazeGenerator(generatorsFactory.get(generator));
+
+            setSearcher(searcherFactory.get(searcherName));
+        }
+        if(viewProp.equals("CLI"))
+        {
+            //TODO close GUI
+        }
     }
 }

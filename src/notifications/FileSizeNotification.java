@@ -1,5 +1,7 @@
 package notifications;
 
+import model.IModel;
+
 public class FileSizeNotification implements ObservableNotification
 {
     private final long size;
@@ -11,9 +13,25 @@ public class FileSizeNotification implements ObservableNotification
         this.mazeName = mazeName;
     }
 
+
+    @Override
+    public void apply() {
+
+    }
+
     @Override
     public void print()
     {
         System.out.println("The file size of maze: " + mazeName + " is " + size);
+    }
+
+    @Override
+    public void init(IModel model) {
+
+    }
+
+    @Override
+    public <T> T getData() {
+        return null;
     }
 }

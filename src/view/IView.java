@@ -10,6 +10,9 @@ public interface IView {
 
     void displayData(ObservableNotification observableNotification);
 
+    <T> T handleData(ObservableNotification observableNotification);
+
+
 
 	
 }

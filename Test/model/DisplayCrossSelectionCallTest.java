@@ -3,10 +3,10 @@ package model;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.MazeArgumentsForInit;
 import algorithms.mazeGenerators.MyMaze3dGenerator;
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Timi on 10/1/2015.

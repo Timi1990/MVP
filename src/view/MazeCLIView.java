@@ -4,7 +4,7 @@ import notifications.ObservableNotification;
 
 import java.util.Observable;
 
-public class MazeView extends Observable implements IView
+public class MazeCLIView extends Observable implements IView
 {
 
     private final CLIFactory cliFactory;
@@ -37,8 +37,8 @@ public class MazeView extends Observable implements IView
     }
 
     @Override
-    public void exitFromGui() {
-
+    public <T> T handleData(ObservableNotification observableNotification) {
+        return null;
     }
 
 

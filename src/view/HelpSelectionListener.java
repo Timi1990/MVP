@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class HelpSelectionListener extends SelectionAdapter
-{
+public class HelpSelectionListener extends SelectionAdapter {
     private final Timer timer = new Timer();
     private final Astar astar;
     private final Maze3d maze3d;
@@ -24,8 +23,7 @@ public class HelpSelectionListener extends SelectionAdapter
     private final Canvas canvas;
     private GameHandler gameHandler;
 
-    public HelpSelectionListener(Astar astar, Maze3d maze3d, GameCharacter gameCharacter, Canvas canvas)
-    {
+    public HelpSelectionListener(Astar astar, Maze3d maze3d, GameCharacter gameCharacter, Canvas canvas) {
         this.astar = astar;
         this.maze3d = maze3d;
         this.gameCharacter = gameCharacter;
@@ -35,8 +33,7 @@ public class HelpSelectionListener extends SelectionAdapter
     }
 
     @Override
-    public void widgetSelected(SelectionEvent selectionEvent)
-    {
+    public void widgetSelected(SelectionEvent selectionEvent) {
         Solution search = astar.search(new Maze3dDomain(maze3d));
 
         final ArrayList<State> solutionList = search.getSolutionList();
@@ -44,14 +41,10 @@ public class HelpSelectionListener extends SelectionAdapter
         final TimerTask task = new TimerTask()
         {
             @Override
-            public void run()
-            {
-                canvas.getDisplay().syncExec(new Runnable()
+            public void run() {
+                canvas.getDisplay().syncExec(() ->
                 {
-                    @Override
-                    public void run()
-                    {
-                        int i = solutionList.size() - 1;
+                    int i = solutionList.size() - 1;
 
                         if(i >= 0)
                         {
@@ -75,11 +68,25 @@ public class HelpSelectionListener extends SelectionAdapter
                         {
                             timer.cancel();
                         }
-                    }
                 });
             }
         };
 
         timer.scheduleAtFixedRate(task, 0, 500);
+    }
+
+    private void checkForWin(int z, int y, int x) {
+        Position exitPosition = maze3d.getExitPosition();
+
+        Position position = new Position(z, y, x);
+        if (exitPosition.equals(position)) {
+            timer.cancel();
+            canvas.dispose();
+
+            WinWindow winWindow = new WinWindow(300, 400);
+            winWindow.run();
+        } else {
+            canvas.redraw();
+        }
     }
 }

@@ -6,50 +6,54 @@ import org.eclipse.swt.graphics.Image;
 
 public class GameCharacter
 {
-    private final Position position;
+    private int x;
+    private int y;
+    private int z;
     private final Image image;
 
-    public GameCharacter(Position startPosition, Image image)
+    public GameCharacter(int x, int y, int z, Image image)
     {
-        this.position = startPosition;
+        this.x = x;
+        this.y = y;
+        this.z = z;
         this.image = image;
     }
 
     public int getZ()
     {
-        return position.getZ();
+        return z;
     }
 
     public void setZ(int z)
     {
-        position.setZ(z);
+        this.z = z;
     }
 
     public int getX()
     {
-        return position.getX();
+        return x;
     }
 
     public void setX(int x)
     {
-        position.setX(x);
+        this.x = x;
     }
 
     public int getY()
     {
-        return position.getY();
+        return y;
     }
 
     public void setY(int y)
     {
-        position.setY(y);
+        this.y = y;
     }
 
     public void setPosition(Position position)
     {
-        position.setY(getY());
-        position.setZ(getZ());
-        position.setX(getX());
+        setX(position.getX());
+        setY(position.getY());
+        setZ(position.getZ());
     }
 
     public void paint(PaintEvent paintEvent, int w, int h)

@@ -4,12 +4,17 @@ import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
+import notifications.ObservableNotification;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 public interface IModel
 {
+    void setNotification(ObservableNotification notification);
+
+    ObservableNotification getNotification();
+
     void generateMaze(String mazeName, Integer dimension, Integer rows, Integer columns) throws Exception;
 
     void displayMaze(String mazeName) throws Exception;

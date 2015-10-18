@@ -2,6 +2,7 @@ package boot;
 
 import model.MazeModel;
 import presenter.Presenter;
+import view.MazeCLIView;
 import view.MazeMenu;
 
 public class Run
@@ -16,6 +17,8 @@ public class Run
         mazeMenu.addObserver(presenter);
 
         mazeMenu.run();
+
+
     }
 }
 

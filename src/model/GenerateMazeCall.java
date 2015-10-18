@@ -27,13 +27,16 @@ public class GenerateMazeCall implements Callable<Maze3d>
 
         Maze3d maze = maze3dGenerator.generate(mazeArgumentsForInit);
 
-        GenerateMazeNotification generateMazeNotification = new GenerateMazeNotification(mazeName);
+//        GenerateMazeNotification generateMazeNotification = new GenerateMazeNotification(mazeName, model, name, dimension, rows, columns);
 
         //todo ask timi for twice
 //        mazeModel.putMazeAndName(mazeName, maze);
 
-        mazeModel.notifyObservers(generateMazeNotification);
+//        mazeModel.notifyObservers(generateMazeNotification);
 
+        //todo ask yoav->
+        ((GenerateMazeNotification) mazeModel.getNotification()).setMaze(maze);
+        mazeModel.notifyObservers(mazeModel.getNotification());
         return maze;
     }
 }

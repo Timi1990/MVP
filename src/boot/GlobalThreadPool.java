@@ -18,7 +18,7 @@ public class GlobalThreadPool
         return ourInstance;
     }
 
-    public <T> Future<T> addCallableToPool(Callable<T> callable)
+    public <T> Future <T> addCallableToPool(Callable<T> callable)
     {
         return executor.submit(callable);
     }

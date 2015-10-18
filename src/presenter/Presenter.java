@@ -1,25 +1,25 @@
 package presenter;
 
-import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.MyMaze3dGenerator;
 import algorithms.mazeGenerators.SimpleMaze3dGenerator;
-import algorithms.search.*;
+import algorithms.search.Astar;
+import algorithms.search.BFS;
+import algorithms.search.MazeManhattanDistance;
+import algorithms.search.Searcher;
 import boot.GlobalThreadPool;
 import model.IModel;
 import notifications.ObservableNotification;
-import notifications.PropertiesNotification;
 import view.IView;
 import view.MazeCLIView;
-import view.MazeGUIView;
+import view.MazeMenu;
 
-import java.io.IOException;
 import java.util.*;
 
 public class Presenter implements Observer
 {
     private final IModel model;
-    private final IView view;
+    private IView view;
     private final HashMap<String, Command> commandNameToCommand = new HashMap<String, Command>();
 
     public Presenter(IModel model, IView view)
@@ -33,31 +33,23 @@ public class Presenter implements Observer
     {
         if (observable == model)
         {
-            if (obj instanceof PropertiesNotification)
-            {
-                setProperties(((PropertiesNotification) obj).getProperties());
-            } else
-            {
-                ObservableNotification notification = (ObservableNotification) obj;
+            view.handleData((ObservableNotification)obj);
 
-                view.displayData(notification);
-            }
+        } else if (observable == view) {
+            if (observable instanceof MazeMenu) {
+                ObservableNotification observableNotification = (ObservableNotification) obj;
+                observableNotification.init(model);
+                observableNotification.apply();
+            } else {
 
-        } else if (observable == view)
-        {
-            String currentLine = (String) obj;
-            try
-            {
-                if (currentLine.equals("Exit"))
-                {
-                    model.exit();
-                } else
-                {
-                    doCommandIfContains(currentLine);
+                String currentLine = (String) obj;
+                try {
+                   {
+                        doCommandIfContains(currentLine);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e)
-            {
-                e.printStackTrace();
             }
         }
     }
@@ -124,11 +116,11 @@ public class Presenter implements Observer
 
 			model.setSearcher(searcherFactory.get(searcherName));
 		}
-		if(viewProp.equals("CLI"))
-		{
-			view.exitFromGui();
-			view = new MazeCLIView();
-		}
+//		if(viewProp.equals("CLI"))
+//		{
+//			view.exitFromGui();
+//			view = new MazeCLIView();
+//		}
 //		try {
 //			HashMap<Maze3d,Solution> hm = this.model.loadSolutionsForMazes();
 //			this.model.setMazeAndSolutionMap(hm);
@@ -143,9 +135,10 @@ public class Presenter implements Observer
 	public void setView(MazeCLIView view)
 	{
 		this.view = view;
+        createAndGetCommandHashMap();
 	}
 
-	public HashMap<String,Command> createAndGetCommandHashMap()
+	public void createAndGetCommandHashMap()
 	{
 		commandNameToCommand.put("Generate", new Generate3dMazeCommand(model));
 		commandNameToCommand.put("Display Maze", new DisplayMazeCommand(model));
@@ -157,7 +150,6 @@ public class Presenter implements Observer
 		commandNameToCommand.put("Solve", new SolveMazeCommand(model));
 		commandNameToCommand.put("Display Solution", new DisplaySolutionCommand(model));
 		commandNameToCommand.put("Exit", new ExitCommand(model));
-		return commandNameToCommand;
 	}
 
 

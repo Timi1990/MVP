@@ -1,5 +1,7 @@
 package notifications;
 
+import model.IModel;
+
 //todo check for needed?
 public class LoadMazeObservableNotification implements ObservableNotification
 {
@@ -22,9 +24,25 @@ public class LoadMazeObservableNotification implements ObservableNotification
         return mazeName;
     }
 
+
+    @Override
+    public void apply() {
+
+    }
+
     @Override
     public void print()
     {
 
+    }
+
+    @Override
+    public void init(IModel model) {
+
+    }
+
+    @Override
+    public <T> T getData() {
+        return null;
     }
 }
