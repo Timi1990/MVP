@@ -22,7 +22,7 @@ public class MazeWindow extends BasicWindow
     @Override
     public void init()
     {
-        shell.setLayout(new GridLayout(1, false));
+        shell.setLayout(new GridLayout(4, false));
         mazeDisplay.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     }
 

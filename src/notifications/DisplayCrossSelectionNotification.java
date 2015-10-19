@@ -2,7 +2,7 @@ package notifications;
 
 import model.IModel;
 
-public class DisplayCrossSelectionNotification implements ObservableNotification
+public class DisplayCrossSelectionNotification implements ObservableNotification<int[][]>
 {
     private final int[][] crossSelection;
     private IModel model;
@@ -14,7 +14,8 @@ public class DisplayCrossSelectionNotification implements ObservableNotification
 
 
     @Override
-    public void apply() {
+    public void apply()
+    {
 
     }
 
@@ -34,12 +35,15 @@ public class DisplayCrossSelectionNotification implements ObservableNotification
     }
 
     @Override
-    public void init(IModel model) {
+    public void init(IModel model)
+    {
         this.model = model;
     }
 
     @Override
-    public <T> T getData() {
-        return (T)crossSelection;
+    public int[][] getData()
+    {
+        return crossSelection;
     }
+
 }

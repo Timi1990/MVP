@@ -11,12 +11,16 @@ public class GameCharacter
     private int z;
     private final Image image;
 
-    public GameCharacter(int x, int y, int z, Image image)
+    public GameCharacter(Image image)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
         this.image = image;
+    }
+
+    public void init(Position startPosition)
+    {
+        this.x = startPosition.getX();
+        this.y = startPosition.getY();
+        this.z = startPosition.getZ();
     }
 
     public int getZ()
@@ -47,13 +51,6 @@ public class GameCharacter
     public void setY(int y)
     {
         this.y = y;
-    }
-
-    public void setPosition(Position position)
-    {
-        setX(position.getX());
-        setY(position.getY());
-        setZ(position.getZ());
     }
 
     public void paint(PaintEvent paintEvent, int w, int h)

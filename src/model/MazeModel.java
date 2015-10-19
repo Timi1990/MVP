@@ -74,7 +74,7 @@ public class MazeModel extends Observable implements IModel
         {
             MazeArgumentsForInit mazeArgumentsForInit = new MazeArgumentsForInit(dimension, rows, columns);
 
-            GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeName,mazeArgumentsForInit,this);
+            GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeArgumentsForInit,this);
 
             Future<Maze3d> future = GlobalThreadPool.getInstance().addCallableToPool(generateMazeCall);
 

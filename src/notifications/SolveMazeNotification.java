@@ -14,7 +14,6 @@ public class SolveMazeNotification implements ObservableNotification
         this.mazeName = mazeName;
     }
 
-
     @Override
     public void apply() {
         try {
@@ -36,7 +35,8 @@ public class SolveMazeNotification implements ObservableNotification
     }
 
     @Override
-    public <T> T getData() {
+    public Object getData()
+    {
         return null;
     }
 }

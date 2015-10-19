@@ -2,7 +2,7 @@ package notifications;
 
 import model.IModel;
 
-public class FileSizeNotification implements ObservableNotification
+public class FileSizeNotification implements ObservableNotification<Long>
 {
     private final long size;
     private final String mazeName;
@@ -31,7 +31,8 @@ public class FileSizeNotification implements ObservableNotification
     }
 
     @Override
-    public <T> T getData() {
-        return null;
+    public Long getData()
+    {
+        return size;
     }
 }

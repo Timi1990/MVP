@@ -2,7 +2,7 @@ package notifications;
 
 import model.IModel;
 
-public interface ObservableNotification
+public interface ObservableNotification<T>
 {
     void apply();
 
@@ -10,5 +10,5 @@ public interface ObservableNotification
 
     void init(IModel model);
 
-    <T> T getData();
+    T getData();
 }

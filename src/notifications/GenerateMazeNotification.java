@@ -4,7 +4,7 @@ package notifications;
 import algorithms.mazeGenerators.Maze3d;
 import model.IModel;
 
-public class GenerateMazeNotification implements ObservableNotification
+public class GenerateMazeNotification implements ObservableNotification<Maze3d>
 {
     private final String mazeName;
     private final int dimension;
@@ -47,10 +47,10 @@ public class GenerateMazeNotification implements ObservableNotification
         this.model = model;
     }
 
-
     @Override
-    public <T> T getData() {
-       return (T) maze;
+    public Maze3d getData()
+    {
+        return maze;
     }
 
     public String getMazeName() {

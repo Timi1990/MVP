@@ -1,4 +1,4 @@
-package view;
+package view.listener;
 
 import algorithms.demo.Maze3dDomain;
 import algorithms.demo.Maze3dState;
@@ -10,6 +10,9 @@ import algorithms.search.State;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Label;
+import view.GameCharacter;
+import view.GameHandler;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -18,17 +21,23 @@ import java.util.TimerTask;
 public class HelpSelectionListener extends SelectionAdapter {
     private final Timer timer = new Timer();
     private final Astar astar;
-    private final Maze3d maze3d;
     private final GameCharacter gameCharacter;
     private final Canvas canvas;
+    private final Label floorNum;
+    private Maze3d maze3d;
     private GameHandler gameHandler;
 
-    public HelpSelectionListener(Astar astar, Maze3d maze3d, GameCharacter gameCharacter, Canvas canvas) {
+    public HelpSelectionListener(Astar astar, GameCharacter gameCharacter, Canvas canvas, Label floorNum)
+    {
         this.astar = astar;
-        this.maze3d = maze3d;
         this.gameCharacter = gameCharacter;
         this.canvas = canvas;
+        this.floorNum = floorNum;
+    }
 
+    public void init(Maze3d maze3d)
+    {
+        this.maze3d = maze3d;
         gameHandler = new GameHandler(maze3d);
     }
 
@@ -51,13 +60,15 @@ public class HelpSelectionListener extends SelectionAdapter {
                             Maze3dState maze3dState = (Maze3dState) solutionList.get(i);
 
                             Position position = maze3dState.getPosition();
-                            int x = position.getX();
-                            int y = position.getY();
-                            int z = position.getZ();
+                            Integer x = position.getX();
+                            Integer y = position.getY();
+                            Integer z = position.getZ();
 
                             gameCharacter.setX(x);
                             gameCharacter.setY(y);
                             gameCharacter.setZ(z);
+
+                            floorNum.setText(z.toString());
 
                             canvas.redraw();
 
@@ -73,20 +84,5 @@ public class HelpSelectionListener extends SelectionAdapter {
         };
 
         timer.scheduleAtFixedRate(task, 0, 500);
-    }
-
-    private void checkForWin(int z, int y, int x) {
-        Position exitPosition = maze3d.getExitPosition();
-
-        Position position = new Position(z, y, x);
-        if (exitPosition.equals(position)) {
-            timer.cancel();
-            canvas.dispose();
-
-            WinWindow winWindow = new WinWindow(300, 400);
-            winWindow.run();
-        } else {
-            canvas.redraw();
-        }
     }
 }

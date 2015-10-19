@@ -2,7 +2,6 @@ package boot;
 
 import model.MazeModel;
 import presenter.Presenter;
-import view.MazeCLIView;
 import view.MazeMenu;
 
 public class Run

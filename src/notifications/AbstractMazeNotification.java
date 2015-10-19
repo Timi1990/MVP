@@ -26,9 +26,4 @@ public abstract class AbstractMazeNotification implements ObservableNotification
     public void init(IModel model) {
 
     }
-
-    @Override
-    public <T> T getData() {
-        return null;
-    }
 }

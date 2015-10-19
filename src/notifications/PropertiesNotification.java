@@ -1,7 +1,6 @@
 package notifications;
 
 import model.IModel;
-import presenter.Properties;
 
 public class PropertiesNotification implements ObservableNotification
 {
@@ -32,7 +31,8 @@ public class PropertiesNotification implements ObservableNotification
     }
 
     @Override
-    public <T> T getData() {
+    public Object getData()
+    {
         return null;
     }
 }

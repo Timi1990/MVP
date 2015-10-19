@@ -22,7 +22,8 @@ public class DisplayMazeExistsNotification implements ObservableNotification
     }
 
     @Override
-    public <T> T getData() {
+    public Object getData()
+    {
         return null;
     }
 }

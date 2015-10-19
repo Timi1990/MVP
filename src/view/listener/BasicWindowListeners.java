@@ -1,4 +1,4 @@
-package view;
+package view.listener;
 
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.PaintListener;

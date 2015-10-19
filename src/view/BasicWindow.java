@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import view.listener.BasicWindowListeners;
 
 import java.util.Observable;
 
@@ -40,6 +41,16 @@ public abstract class BasicWindow extends Observable implements Runnable, BasicW
                 display.dispose();
             }
         });
+    }
+
+    public Display getDisplay()
+    {
+        return display;
+    }
+
+    public Shell getShell()
+    {
+        return shell;
     }
 
     @Override

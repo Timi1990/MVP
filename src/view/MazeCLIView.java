@@ -37,7 +37,7 @@ public class MazeCLIView extends Observable implements IView
     }
 
     @Override
-    public <T> T handleData(ObservableNotification observableNotification) {
+    public <T> T handleData(ObservableNotification<T> observableNotification) {
         return null;
     }
 

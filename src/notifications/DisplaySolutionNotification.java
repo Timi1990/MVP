@@ -3,7 +3,7 @@ package notifications;
 import algorithms.search.Solution;
 import model.IModel;
 
-public class DisplaySolutionNotification implements ObservableNotification
+public class DisplaySolutionNotification implements ObservableNotification<Solution>
 {
     private final Solution solution;
     private IModel model;
@@ -33,7 +33,8 @@ public class DisplaySolutionNotification implements ObservableNotification
     }
 
     @Override
-    public <T> T getData() {
-        return (T)solution;
+    public Solution getData()
+    {
+        return solution;
     }
 }

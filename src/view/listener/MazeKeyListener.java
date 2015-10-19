@@ -1,4 +1,4 @@
-package view;
+package view.listener;
 
 import algorithms.mazeGenerators.IndexOutOfBoundsException;
 import algorithms.mazeGenerators.Maze3d;
@@ -6,27 +6,36 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Label;
+import view.GameCharacter;
+import view.GameHandler;
 
 public class MazeKeyListener extends KeyAdapter {
     private final GameCharacter gameCharacter;
     private final Canvas canvas;
-    private final Maze3d maze3d;
+    private final Label label;
+    private Maze3d maze3d;
     private GameHandler gameHandler;
 
-    public MazeKeyListener(GameCharacter gameCharacter, Canvas canvas, Maze3d maze3d)
+    public MazeKeyListener(GameCharacter gameCharacter, Canvas canvas, Label label)
     {
         this.gameCharacter = gameCharacter;
         this.canvas = canvas;
-        this.maze3d = maze3d;
+        this.label = label;
+    }
 
+    public void init(Maze3d maze3d)
+    {
+        this.maze3d = maze3d;
         gameHandler = new GameHandler(maze3d);
     }
 
     @Override
-    public void keyPressed(KeyEvent keyEvent) {
-        int x = gameCharacter.getX();
-        int y = gameCharacter.getY();
-        int z = gameCharacter.getZ();
+    public void keyPressed(KeyEvent keyEvent)
+    {
+        Integer x = gameCharacter.getX();
+        Integer y = gameCharacter.getY();
+        Integer z = gameCharacter.getZ();
 
         try {
             int[][] mazeData = maze3d.getCrossSectionByZ(z);
@@ -73,14 +82,22 @@ public class MazeKeyListener extends KeyAdapter {
                     }
                     break;
                 }
-                case SWT.PAGE_UP: {
-                    if (z + 1 < maze3d.getDimension()) {
-                        int[][] crossSectionByZ = maze3d.getCrossSectionByZ(z + 1);
+                case SWT.PAGE_UP:
+                {
+                    Integer updateZ = z + 1;
 
-                        if (crossSectionByZ[y][x] == 0) {
-                            gameCharacter.setZ(z + 1);
+                    if (updateZ < maze3d.getDimension())
+                    {
+                        int[][] crossSectionByZ = maze3d.getCrossSectionByZ(updateZ);
 
-                            gameHandler.checkForWin(z + 1, y, x);
+                        if (crossSectionByZ[y][x] == 0)
+                        {
+                            gameCharacter.setZ(updateZ);
+
+                            gameHandler.checkForWin(updateZ, y, x);
+
+                            label.setText(updateZ.toString());
+                            label.pack();
 
                             canvas.redraw();
                         }
@@ -88,14 +105,20 @@ public class MazeKeyListener extends KeyAdapter {
                     }
                     break;
                 }
-                case SWT.PAGE_DOWN: {
-                    if (z - 1 >= 0) {
-                        int[][] crossSectionByZ = maze3d.getCrossSectionByZ(z - 1);
+                case SWT.PAGE_DOWN:
+                {
+                    Integer updateZ = z - 1;
+                    if (updateZ >= 0)
+                    {
+                        int[][] crossSectionByZ = maze3d.getCrossSectionByZ(updateZ);
 
-                        if (crossSectionByZ[y][x] == 0) {
-                            gameCharacter.setZ(z - 1);
+                        if (crossSectionByZ[y][x] == 0)
+                        {
+                            gameCharacter.setZ(updateZ);
 
-                            gameHandler.checkForWin(z - 1, y, x);
+                            gameHandler.checkForWin(updateZ, y, x);
+
+                            label.setText(updateZ.toString());
 
                             canvas.redraw();
                         }

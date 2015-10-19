@@ -42,7 +42,8 @@ public class LoadMazeObservableNotification implements ObservableNotification
     }
 
     @Override
-    public <T> T getData() {
+    public Object getData()
+    {
         return null;
     }
 }

@@ -4,15 +4,12 @@ import model.IModel;
 
 public class LoadMazeNotification extends AbstractMazeNotification
 {
-
     private IModel model;
-
 
     public LoadMazeNotification(String mazeName)
     {
         super(mazeName);
     }
-
 
     @Override
     public void apply() {
@@ -25,7 +22,9 @@ public class LoadMazeNotification extends AbstractMazeNotification
     }
 
     @Override
-    public <T> T getData() {
+    public Object getData()
+    {
         return null;
     }
+
 }
