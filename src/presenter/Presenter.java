@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Presenter implements Observer
 {
-    private final IModel model;
+    private IModel model;
     private IView view;
     private final HashMap<String, Command> commandNameToCommand = new HashMap<String, Command>();
 
@@ -106,6 +106,5 @@ public class Presenter implements Observer
         commandNameToCommand.put("Display Solution", new DisplaySolutionCommand(model));
         commandNameToCommand.put("Exit", new ExitCommand(model));
     }
-
 
 }

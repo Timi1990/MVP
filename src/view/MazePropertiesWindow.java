@@ -22,8 +22,7 @@ public class MazePropertiesWindow extends BasicWindow implements IView
     @Override
     public void init()
     {
-        Presenter presenter = new Presenter(new MazeModel(), this);
-        addObserver(presenter);
+
 
         getShell().setText("Maze properties");
         GridLayout gridLayout = new GridLayout();
@@ -48,6 +47,7 @@ public class MazePropertiesWindow extends BasicWindow implements IView
         button.setText("Generate");
 
         button.pack();
+        getShell().pack();
 
         GeneratorMazeWindowListenerFactory generatorMazeWindowListenerFactory = new GeneratorMazeWindowListenerFactory(this);
 

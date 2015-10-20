@@ -14,6 +14,7 @@ import java.util.Random;
 
 public class MazePaintListener implements PaintListener
 {
+    //todo NOTIFICATIONS FOR CROSS SELECTION
     private final Canvas canvas;
     private Maze3d maze3d;
     private final GameCharacter gameCharacter;

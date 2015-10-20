@@ -115,6 +115,18 @@ public class MazeModel extends Observable implements IModel
     }
 
     @Override
+    public void getCrossSelectionBy(Maze3d maze,Integer index) throws Exception {
+        setChanged();
+
+        DisplayCrossSelectionRunnable displayCrossSelectionRunnable = new DisplayCrossSelectionRunnable(this, "Z", maze, index);
+
+        Future<?> future = GlobalThreadPool.getInstance().addRunnableToPool(displayCrossSelectionRunnable);
+
+        future.get();
+
+    }
+
+    @Override
     public void save(String filePath, String mazeName) throws Exception
     {
         setChanged();
@@ -175,6 +187,11 @@ public class MazeModel extends Observable implements IModel
     }
 
     @Override
+    public Searcher getAlgorithm() {
+        return searcher;
+    }
+
+    @Override
     public void putMazeAndSolution(Maze3d maze, Solution solution)
     {
         mazeAndSolution.put(maze, solution);
@@ -208,9 +225,9 @@ public class MazeModel extends Observable implements IModel
     }
 
     @Override
-    public void saveSolutionsBeforeExit() throws IOException
+    public void saveSolutionsBeforeExit(String path) throws IOException
     {
-
+        if(path == null){
         Scanner scanner = new Scanner(System.in);
         String filePath;
 
@@ -221,7 +238,15 @@ public class MazeModel extends Observable implements IModel
 
         out.writeObject(mazeAndSolution);
         out.flush();
-        out.close();
+        out.close();}
+        else
+        {
+            ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(path)));
+
+            out.writeObject(mazeAndSolution);
+            out.flush();
+            out.close();
+        }
     }
 
     @Override
@@ -253,7 +278,7 @@ public class MazeModel extends Observable implements IModel
     @Override
     public void exit() throws IOException
     {
-        saveSolutionsBeforeExit();
+        saveSolutionsBeforeExit(null);
         System.out.println("Exiting...");
         System.exit(1);
     }
@@ -282,6 +307,7 @@ public class MazeModel extends Observable implements IModel
     @Override
     public void setProperties(String filePath)
     {
+        System.out.println("in model prop");
         setChanged();
         XMLDecoder xmlDecoder = null;
         try
@@ -321,7 +347,8 @@ public class MazeModel extends Observable implements IModel
         }
         if(viewProp.equals("CLI"))
         {
-            //TODO close GUI
+            notification.apply();
+            notifyObservers(notification);
         }
     }
 }

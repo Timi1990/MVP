@@ -34,16 +34,16 @@ public class GeneratorMazeWindowListenerFactory
         Label floorNum = new Label(mazeWindow.getShell(), SWT.FILL);
         floorNum.setText("0");
 
-        MazeKeyListener mazeKeyListener = new MazeKeyListener(gameCharacter, canvas, floorNum);
+        MazeKeyListener mazeKeyListener = new MazeKeyListener(mazeWindow,gameCharacter, canvas, floorNum);
         MazePaintListener mazePaintListener = new MazePaintListener(canvas, gameCharacter);
 
         mazeWindow.addPaintListener(mazePaintListener);
         mazeWindow.addKeyListener(mazeKeyListener);
 
         Astar astar = new Astar(new MazeManhattanDistance());
-        HelpSelectionListener selectionListener = new HelpSelectionListener(astar, gameCharacter, canvas, floorNum);
+        HelpSelectionListener selectionListener = new HelpSelectionListener(mazeWindow, gameCharacter, canvas, floorNum);
 
-        HintSelectionListener hintSelectionListener = new HintSelectionListener(astar, gameCharacter, canvas, floorNum);
+        HintSelectionListener hintSelectionListener = new HintSelectionListener(mazeWindow, gameCharacter, canvas, floorNum);
 
         createHelpButton(mazeWindow, selectionListener);
         createHintButton(mazeWindow, hintSelectionListener);

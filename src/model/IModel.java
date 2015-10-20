@@ -25,6 +25,8 @@ public interface IModel
 
     void getCrossSelectionBy(String axis, String mazeName, Integer index) throws Exception;
 
+    void getCrossSelectionBy(Maze3d maze,Integer index) throws Exception;
+
     void save(String filePath, String mazeName) throws Exception;
 
     void load(String filePath, String mazeName) throws Exception;
@@ -33,13 +35,15 @@ public interface IModel
 
     void solve(String name) throws Exception;
 
+    Searcher getAlgorithm();
+
     void putMazeAndSolution(Maze3d maze, Solution solution);
 
     void displaySolution(String mazeName) throws Exception;
 
     void fileSize(String mazeName) throws Exception;
 
-    void saveSolutionsBeforeExit() throws IOException;
+    void saveSolutionsBeforeExit(String path) throws IOException;
 
     HashMap<Maze3d, Solution> loadSolutionsForMazes() throws IOException, ClassNotFoundException;
 

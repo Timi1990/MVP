@@ -8,6 +8,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.*;
+import view.listener.ExitMenuListener;
+import view.listener.HelpMenuListener;
+import view.listener.SaveMenuListener;
 
 public class MazeMenu extends BasicWindow implements IView
 {
@@ -64,6 +67,8 @@ public class MazeMenu extends BasicWindow implements IView
         button.setText("bla");
         shell.setMenuBar(menuBar);
         button.pack();
+        runMazeItem.addSelectionListener(new SelectionAdapter() {
+        });
 
         MazePropertiesWindow mazePropertiesWindow = new MazePropertiesWindow(300, 300);
 
@@ -87,63 +92,9 @@ public class MazeMenu extends BasicWindow implements IView
                 }
             }
         });
-        fileExitItem.addSelectionListener(new SelectionListener()
-        {
-            @Override
-            public void widgetSelected(SelectionEvent selectionEvent)
-            {
-                MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-                messageBox.setMessage("Are you sure you want to exit?");
-                messageBox.setText("Exit");
-                display.beep();
-                int answer = messageBox.open();
-                if (answer == SWT.YES)
-                {
-                    shell.dispose();
-                    display.dispose();
-                }
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent selectionEvent)
-            {
-
-            }
-        });
-        fileSaveItem.addSelectionListener(new SelectionListener()
-        {
-            @Override
-            public void widgetSelected(SelectionEvent selectionEvent)
-            {
-                FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
-                fileDialog.setText("Save");
-                fileDialog.setFilterPath("C:/");
-                fileDialog.open();
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent selectionEvent)
-            {
-
-            }
-        });
-        helpGetHelpItem.addSelectionListener(new SelectionListener()
-        {
-            @Override
-            public void widgetSelected(SelectionEvent selectionEvent)
-            {
-                MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION);
-                messageBox.setText("Information");
-                messageBox.setMessage("This menu is a general menu for activating different games" + ", please open your xml properties file to start.");
-                messageBox.open();
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent selectionEvent)
-            {
-
-            }
-        });
+        fileExitItem.addSelectionListener(new ExitMenuListener(display,shell));
+        fileSaveItem.addSelectionListener(new SaveMenuListener(this,shell));
+        helpGetHelpItem.addSelectionListener(new HelpMenuListener(shell));
         openProperties.addSelectionListener(new SelectionListener()
         {
             @Override
@@ -163,6 +114,9 @@ public class MazeMenu extends BasicWindow implements IView
                 {
                     initialized = true;
                 }
+
+//                Boolean view = handleData(propertiesNotification);
+                //todo if view = true, close window->switch to CLI
             }
 
             @Override
@@ -192,6 +146,10 @@ public class MazeMenu extends BasicWindow implements IView
     {
 
 
+    }
+    public void setChange()
+    {
+        this.setChanged();
     }
 
 

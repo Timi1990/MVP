@@ -5,14 +5,17 @@ import algorithms.demo.Maze3dState;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Astar;
+import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import algorithms.search.State;
+import notifications.AlgorithmNotification;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Label;
 import view.GameCharacter;
 import view.GameHandler;
+import view.MazeWindow;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -20,16 +23,16 @@ import java.util.TimerTask;
 
 public class HelpSelectionListener extends SelectionAdapter {
     private final Timer timer = new Timer();
-    private final Astar astar;
     private final GameCharacter gameCharacter;
     private final Canvas canvas;
     private final Label floorNum;
     private Maze3d maze3d;
     private GameHandler gameHandler;
+    private final MazeWindow mazeWindow;
 
-    public HelpSelectionListener(Astar astar, GameCharacter gameCharacter, Canvas canvas, Label floorNum)
+    public HelpSelectionListener(MazeWindow mazeWindow,GameCharacter gameCharacter, Canvas canvas, Label floorNum)
     {
-        this.astar = astar;
+        this.mazeWindow = mazeWindow;
         this.gameCharacter = gameCharacter;
         this.canvas = canvas;
         this.floorNum = floorNum;
@@ -43,9 +46,15 @@ public class HelpSelectionListener extends SelectionAdapter {
 
     @Override
     public void widgetSelected(SelectionEvent selectionEvent) {
-        Solution search = astar.search(new Maze3dDomain(maze3d));
 
-        final ArrayList<State> solutionList = search.getSolutionList();
+        mazeWindow.setChanged();
+        AlgorithmNotification algorithmNotification = new AlgorithmNotification();
+        mazeWindow.notifyObservers(algorithmNotification);
+        Searcher searcher = mazeWindow.handleData(algorithmNotification);
+
+        Solution solution = searcher.search(new Maze3dDomain(maze3d));
+
+        final ArrayList<State> solutionList = solution.getSolutionList();
 
         final TimerTask task = new TimerTask()
         {

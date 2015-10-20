@@ -11,7 +11,7 @@ public class Run
         MazeModel mazeModel = new MazeModel();
         MazeMenu mazeMenu = new MazeMenu(500, 500);
 
-        Presenter presenter = new Presenter(mazeModel, mazeMenu);
+        Presenter presenter = new Presenter(mazeModel,mazeMenu);
         mazeModel.addObserver(presenter);
         mazeMenu.addObserver(presenter);
 
