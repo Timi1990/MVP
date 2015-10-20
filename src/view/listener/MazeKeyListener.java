@@ -1,6 +1,5 @@
 package view.listener;
 
-import algorithms.mazeGenerators.IndexOutOfBoundsException;
 import algorithms.mazeGenerators.Maze3d;
 import notifications.DisplayCrossSelectionNotification;
 import org.eclipse.swt.SWT;
@@ -10,121 +9,117 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Label;
 import view.GameCharacter;
 import view.GameHandler;
-import view.MazeWindow;
+import view.MazeMenu;
 
-public class MazeKeyListener extends KeyAdapter {
+public class MazeKeyListener extends KeyAdapter
+{
     private final GameCharacter gameCharacter;
     private final Canvas canvas;
     private final Label label;
-    private Maze3d maze3d;
-    private GameHandler gameHandler;
-    private MazeWindow mazeWindow;
+    private final Maze3d maze3d;
+    private final MazeMenu mazeWindow;
+    private final GameHandler gameHandler;
 
-    public MazeKeyListener(MazeWindow mazeWindow,GameCharacter gameCharacter, Canvas canvas, Label label)
+    public MazeKeyListener(MazeMenu mazeWindow, GameCharacter gameCharacter, Canvas canvas, Label label, Maze3d maze3d, GameHandler gameHandler)
     {
         this.mazeWindow = mazeWindow;
         this.gameCharacter = gameCharacter;
         this.canvas = canvas;
         this.label = label;
-    }
-
-    public void init(Maze3d maze3d)
-    {
         this.maze3d = maze3d;
-        gameHandler = new GameHandler(maze3d);
+        this.gameHandler = gameHandler;
     }
 
     @Override
-    public void keyPressed(KeyEvent keyEvent) {
+    public void keyPressed(KeyEvent keyEvent)
+    {
         Integer x = gameCharacter.getX();
         Integer y = gameCharacter.getY();
         Integer z = gameCharacter.getZ();
 
-        DisplayCrossSelectionNotification displayCrossSelectionNotification = new DisplayCrossSelectionNotification("Z", z, maze3d);
-        mazeWindow.setChanged();
-        mazeWindow.notifyObservers(displayCrossSelectionNotification);
+        int[][] mazeData = getCrossSelectionBy(z);
 
-
-        int[][] mazeData = mazeWindow.handleData(displayCrossSelectionNotification);
-
-        switch (keyEvent.keyCode) {
-            case SWT.ARROW_RIGHT: {
-                if (mazeData[y][x + 1] != 1) {
+        switch (keyEvent.keyCode)
+        {
+            case SWT.ARROW_RIGHT:
+            {
+                if (mazeData[y][x + 1] != 1)
+                {
                     gameCharacter.setX(x + 1);
 
-                    gameHandler.checkForWin(z, y, x + 1);
+                    gameHandler.checkForWin(gameCharacter.getPosition());
 
                     canvas.redraw();
                 }
                 break;
 
             }
-            case SWT.ARROW_LEFT: {
-                if (x != 0 && mazeData[y][x - 1] != 1) {
+            case SWT.ARROW_LEFT:
+            {
+                if (x != 0 && mazeData[y][x - 1] != 1)
+                {
                     gameCharacter.setX(x - 1);
 
-                    gameHandler.checkForWin(z, y, x - 1);
-
+                    gameHandler.checkForWin(gameCharacter.getPosition());
                     canvas.redraw();
                 }
                 break;
             }
-            case SWT.ARROW_DOWN: {
-                if (mazeData[y + 1][x] != 1) {
+            case SWT.ARROW_DOWN:
+            {
+                if (mazeData[y + 1][x] != 1)
+                {
                     gameCharacter.setY(y + 1);
 
-                    gameHandler.checkForWin(z, y + 1, x);
-
+                    gameHandler.checkForWin(gameCharacter.getPosition());
                     canvas.redraw();
                 }
                 break;
             }
-            case SWT.ARROW_UP: {
-                if (mazeData[y - 1][x] != 1) {
+            case SWT.ARROW_UP:
+            {
+                if (mazeData[y - 1][x] != 1)
+                {
                     gameCharacter.setY(y - 1);
 
-                    gameHandler.checkForWin(z, y - 1, x);
-
+                    gameHandler.checkForWin(gameCharacter.getPosition());
                     canvas.redraw();
                 }
                 break;
             }
-            case SWT.PAGE_UP: {
+            case SWT.PAGE_UP:
+            {
                 Integer updateZ = z + 1;
 
-                if (updateZ < maze3d.getDimension()) {
-                    DisplayCrossSelectionNotification displayCrossSelectionNotificationUp = new DisplayCrossSelectionNotification("Z", updateZ, maze3d);
-                    mazeWindow.setChanged();
-                    mazeWindow.notifyObservers(displayCrossSelectionNotificationUp);
+                if (updateZ < maze3d.getDimension())
+                {
+                    int[][] crossSelectionBy = getCrossSelectionBy(updateZ);
 
-                    int[][] crossSectionByZ = mazeWindow.handleData(displayCrossSelectionNotificationUp);
-
-                    if (crossSectionByZ[y][x] == 0) {
+                    if (crossSelectionBy[y][x] == 0)
+                    {
                         gameCharacter.setZ(updateZ);
 
-                        gameHandler.checkForWin(updateZ, y, x);
-
+                        gameHandler.checkForWin(gameCharacter.getPosition());
                         label.setText(updateZ.toString());
-                        label.pack();
-
                         canvas.redraw();
                     }
 
                 }
                 break;
             }
-            case SWT.PAGE_DOWN: {
+            case SWT.PAGE_DOWN:
+            {
                 Integer updateZ = z - 1;
-                if (updateZ >= 0) {
-                    DisplayCrossSelectionNotification displayCrossSelectionNotificationDown = new DisplayCrossSelectionNotification("Z", updateZ, maze3d);
-                    mazeWindow.setChanged();
-                    mazeWindow.notifyObservers(displayCrossSelectionNotificationDown);
-                    int[][] crossSectionByZ = mazeWindow.handleData(displayCrossSelectionNotificationDown);
 
-                    if (crossSectionByZ[y][x] == 0) {
+                if (updateZ >= 0)
+                {
+                    int[][] crossSelectionBy = getCrossSelectionBy(updateZ);
+
+                    if (crossSelectionBy[y][x] == 0)
+                    {
                         gameCharacter.setZ(updateZ);
 
-                        gameHandler.checkForWin(updateZ, y, x);
+                        gameHandler.checkForWin(gameCharacter.getPosition());
 
                         label.setText(updateZ.toString());
 
@@ -134,7 +129,14 @@ public class MazeKeyListener extends KeyAdapter {
                 break;
             }
         }
+    }
 
+    private int[][] getCrossSelectionBy(Integer z)
+    {
+        DisplayCrossSelectionNotification displayCrossSelectionNotification = new DisplayCrossSelectionNotification(maze3d, z, "Z");
+        mazeWindow.applaySetChanged();
+        mazeWindow.notifyObservers(displayCrossSelectionNotification);
 
+        return mazeWindow.handleData(displayCrossSelectionNotification);
     }
 }

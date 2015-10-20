@@ -16,8 +16,6 @@ public class Run
         mazeMenu.addObserver(presenter);
 
         mazeMenu.run();
-
-
     }
 }
 

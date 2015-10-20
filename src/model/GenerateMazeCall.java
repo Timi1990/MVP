@@ -3,7 +3,7 @@ package model;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.MazeArgumentsForInit;
-import notifications.GenerateMazeNotification;
+import notifications.ObservableNotification;
 
 import java.util.concurrent.Callable;
 
@@ -25,8 +25,10 @@ public class GenerateMazeCall implements Callable<Maze3d>
 
         Maze3d maze = maze3dGenerator.generate(mazeArgumentsForInit);
 
-        ((GenerateMazeNotification) mazeModel.getNotification()).setMaze(maze);
-        mazeModel.notifyObservers(mazeModel.getNotification());
+        ObservableNotification<Maze3d> notification = mazeModel.<Maze3d>getNotification();
+        notification.setData(maze);
+
+        mazeModel.notifyObservers(notification);
 
         return maze;
     }

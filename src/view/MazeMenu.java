@@ -6,7 +6,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.*;
 import view.listener.ExitMenuListener;
 import view.listener.HelpMenuListener;
@@ -15,7 +14,6 @@ import view.listener.SaveMenuListener;
 public class MazeMenu extends BasicWindow implements IView
 {
     private Menu menuBar;
-
     private boolean initialized = false;
 
     public MazeMenu(int width, int height)
@@ -63,15 +61,11 @@ public class MazeMenu extends BasicWindow implements IView
         MenuItem helpGetHelpItem = new MenuItem(helpMenu, SWT.PUSH);
         helpGetHelpItem.setText("Get help");
 
-        final Button button = new Button(shell, SWT.PUSH | SWT.BORDER);
-        button.setText("bla");
         shell.setMenuBar(menuBar);
-        button.pack();
         runMazeItem.addSelectionListener(new SelectionAdapter() {
         });
 
-        MazePropertiesWindow mazePropertiesWindow = new MazePropertiesWindow(300, 300);
-
+        MazePropertiesWindow mazePropertiesWindow = new MazePropertiesWindow(this);
 
 
         runMazeItem.addSelectionListener(new SelectionAdapter()
@@ -88,7 +82,7 @@ public class MazeMenu extends BasicWindow implements IView
                     messageBox.open();
                 } else
                 {
-                    mazePropertiesWindow.run();
+                    mazePropertiesWindow.createWindow().open();
                 }
             }
         });
@@ -129,29 +123,16 @@ public class MazeMenu extends BasicWindow implements IView
     }
 
     @Override
-    public Canvas getCanvas()
-    {
-        return null;
-    }
-
-    @Override
-    public void setBackGround(Color backGround)
-    {
-
-    }
-
-
-    @Override
     public void notifyFromReader(String notify)
     {
 
 
     }
-    public void setChange()
-    {
-        this.setChanged();
-    }
 
+    public void applaySetChanged()
+    {
+        setChanged();
+    }
 
     @Override
     public void handleCommandNotFound()
@@ -160,7 +141,6 @@ public class MazeMenu extends BasicWindow implements IView
     }
 
     @Override
-
     public void displayData(ObservableNotification observableNotification)
     {
 
@@ -169,7 +149,7 @@ public class MazeMenu extends BasicWindow implements IView
     @Override
     public <T> T handleData(ObservableNotification<T> observableNotification)
     {
-        return null;
+        return observableNotification.getData();
     }
 
 }

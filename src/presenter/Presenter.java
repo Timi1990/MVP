@@ -3,7 +3,6 @@ package presenter;
 import model.IModel;
 import notifications.ObservableNotification;
 import view.IView;
-import view.MazeCLIView;
 
 import java.util.*;
 
@@ -26,22 +25,19 @@ public class Presenter implements Observer
         {
             view.handleData((ObservableNotification) obj);
 
-        } else if (observable == view)
+        } else
         {
             if (observable instanceof IView)
             {
                 ObservableNotification observableNotification = (ObservableNotification) obj;
                 observableNotification.init(model);
                 observableNotification.apply();
-            }
-            else
+            } else
             {
                 String currentLine = (String) obj;
                 try
                 {
-                    {
-                        doCommandIfContains(currentLine);
-                    }
+                    doCommandIfContains(currentLine);
                 } catch (Exception e)
                 {
                     e.printStackTrace();
@@ -66,7 +62,7 @@ public class Presenter implements Observer
             }
         }
 
-        if (! isContains)
+        if (!isContains)
         {
             view.handleCommandNotFound();
         }
@@ -87,7 +83,7 @@ public class Presenter implements Observer
         return command.substring(start + 1, end);
     }
 
-    public void setView(MazeCLIView view)
+    public void setView(IView view)
     {
         this.view = view;
         createAndGetCommandHashMap();

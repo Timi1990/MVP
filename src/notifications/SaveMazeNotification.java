@@ -36,4 +36,10 @@ public class SaveMazeNotification implements ObservableNotification
         return null;
     }
 
+    @Override
+    public void setData(Object data)
+    {
+
+    }
+
 }

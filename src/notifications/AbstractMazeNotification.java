@@ -1,7 +1,5 @@
 package notifications;
 
-import model.IModel;
-
 public abstract class AbstractMazeNotification implements ObservableNotification
 {
     private final String mazeName;
@@ -22,8 +20,4 @@ public abstract class AbstractMazeNotification implements ObservableNotification
         System.out.println("Maze " + mazeName + " is loaded");
     }
 
-    @Override
-    public void init(IModel model) {
-
-    }
 }

@@ -27,4 +27,10 @@ public class LoadMazeNotification extends AbstractMazeNotification
         return null;
     }
 
+    @Override
+    public void setData(Object data)
+    {
+
+    }
+
 }

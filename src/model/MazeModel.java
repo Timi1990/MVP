@@ -27,13 +27,20 @@ public class MazeModel extends Observable implements IModel
     private ObservableNotification notification;
 
     @Override
-    public ObservableNotification getNotification() {
+    public <T> ObservableNotification<T> getNotification()
+    {
         return notification;
     }
 
     @Override
-    public void setNotification(ObservableNotification notification) {
+    public <T> void setNotification(ObservableNotification<T> notification)
+    {
         this.notification = notification;
+    }
+
+    public Searcher getSearcher()
+    {
+        return searcher;
     }
 
     @Override
@@ -47,11 +54,6 @@ public class MazeModel extends Observable implements IModel
     {
 
         return mazeAndSolution.get(mazeName);
-    }
-
-    public Searcher getSearcher()
-    {
-        return searcher;
     }
 
     public Maze3dGenerator getMazeGenerator()
@@ -74,7 +76,7 @@ public class MazeModel extends Observable implements IModel
         {
             MazeArgumentsForInit mazeArgumentsForInit = new MazeArgumentsForInit(dimension, rows, columns);
 
-            GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeArgumentsForInit,this);
+            GenerateMazeCall generateMazeCall = new GenerateMazeCall(mazeArgumentsForInit, this);
 
             Future<Maze3d> future = GlobalThreadPool.getInstance().addCallableToPool(generateMazeCall);
 
@@ -115,10 +117,11 @@ public class MazeModel extends Observable implements IModel
     }
 
     @Override
-    public void getCrossSelectionBy(Maze3d maze,Integer index) throws Exception {
+    public void getCrossSelectionBy(Maze3d maze, Integer index, String axis) throws Exception
+    {
         setChanged();
 
-        DisplayCrossSelectionRunnable displayCrossSelectionRunnable = new DisplayCrossSelectionRunnable(this, "Z", maze, index);
+        DisplayCrossSelectionRunnable displayCrossSelectionRunnable = new DisplayCrossSelectionRunnable(this, axis, maze, index);
 
         Future<?> future = GlobalThreadPool.getInstance().addRunnableToPool(displayCrossSelectionRunnable);
 
@@ -162,7 +165,6 @@ public class MazeModel extends Observable implements IModel
     @Override
     public void solve(String name) throws Exception
     {
-
         setChanged();
 
         if (mazeAndName.containsKey(name))
@@ -187,7 +189,8 @@ public class MazeModel extends Observable implements IModel
     }
 
     @Override
-    public Searcher getAlgorithm() {
+    public Searcher getAlgorithm()
+    {
         return searcher;
     }
 
@@ -227,19 +230,20 @@ public class MazeModel extends Observable implements IModel
     @Override
     public void saveSolutionsBeforeExit(String path) throws IOException
     {
-        if(path == null){
-        Scanner scanner = new Scanner(System.in);
-        String filePath;
+        if (path == null)
+        {
+            Scanner scanner = new Scanner(System.in);
+            String filePath;
 
-        System.out.println("Enter path to save maze's solutions");
-        filePath = scanner.next();
+            System.out.println("Enter path to save maze's solutions");
+            filePath = scanner.next();
 
-        ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filePath)));
+            ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filePath)));
 
-        out.writeObject(mazeAndSolution);
-        out.flush();
-        out.close();}
-        else
+            out.writeObject(mazeAndSolution);
+            out.flush();
+            out.close();
+        } else
         {
             ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(path)));
 
@@ -345,7 +349,7 @@ public class MazeModel extends Observable implements IModel
 
             setSearcher(searcherFactory.get(searcherName));
         }
-        if(viewProp.equals("CLI"))
+        if (viewProp.equals("CLI"))
         {
             notification.apply();
             notifyObservers(notification);

@@ -46,4 +46,10 @@ public class LoadMazeObservableNotification implements ObservableNotification
     {
         return null;
     }
+
+    @Override
+    public void setData(Object data)
+    {
+
+    }
 }

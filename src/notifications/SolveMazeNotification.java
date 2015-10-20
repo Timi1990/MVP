@@ -15,10 +15,13 @@ public class SolveMazeNotification implements ObservableNotification
     }
 
     @Override
-    public void apply() {
-        try {
+    public void apply()
+    {
+        try
+        {
             model.solve(mazeName);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
@@ -30,7 +33,8 @@ public class SolveMazeNotification implements ObservableNotification
     }
 
     @Override
-    public void init(IModel model) {
+    public void init(IModel model)
+    {
         this.model = model;
     }
 
@@ -38,5 +42,11 @@ public class SolveMazeNotification implements ObservableNotification
     public Object getData()
     {
         return null;
+    }
+
+    @Override
+    public void setData(Object data)
+    {
+
     }
 }

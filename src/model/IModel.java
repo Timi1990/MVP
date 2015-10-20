@@ -11,9 +11,9 @@ import java.util.HashMap;
 
 public interface IModel
 {
-    void setNotification(ObservableNotification notification);
+    <T> void setNotification(ObservableNotification<T> notification);
 
-    ObservableNotification getNotification();
+    <T> ObservableNotification getNotification();
 
     void generateMaze(String mazeName, Integer dimension, Integer rows, Integer columns) throws Exception;
 
@@ -25,7 +25,7 @@ public interface IModel
 
     void getCrossSelectionBy(String axis, String mazeName, Integer index) throws Exception;
 
-    void getCrossSelectionBy(Maze3d maze,Integer index) throws Exception;
+    void getCrossSelectionBy(Maze3d maze, Integer index, String axis) throws Exception;
 
     void save(String filePath, String mazeName) throws Exception;
 

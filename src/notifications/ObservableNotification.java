@@ -11,4 +11,6 @@ public interface ObservableNotification<T>
     void init(IModel model);
 
     T getData();
+
+    void setData(T data);
 }

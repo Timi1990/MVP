@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
-/**
- * Created by Timi on 9/28/2015.
- */
+
 public class ReaderFileRunnable implements Runnable
 {
     private final BufferedReader in;
@@ -17,7 +15,7 @@ public class ReaderFileRunnable implements Runnable
     private final HashMap<String, Command> commandHashMap;
     private final MazeCLIView view;
 
-    public ReaderFileRunnable(BufferedReader in, PrintWriter out, HashMap<String, Command> commandHashMap,MazeCLIView view)
+    public ReaderFileRunnable(BufferedReader in, PrintWriter out, HashMap<String, Command> commandHashMap, MazeCLIView view)
     {
         this.in = in;
         this.out = out;
@@ -45,24 +43,18 @@ public class ReaderFileRunnable implements Runnable
         } catch (Exception e)
         {
             e.printStackTrace();
-        }finally{
-            try {
+        } finally
+        {
+            try
+            {
                 in.close();
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 e.printStackTrace();
             }
             out.close();
-//            System.exit(1);
         }
     }
-
-
-
-
-
-
-
-
 
 
 }

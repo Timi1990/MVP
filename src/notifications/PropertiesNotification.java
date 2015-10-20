@@ -15,7 +15,8 @@ public class PropertiesNotification implements ObservableNotification
 
 
     @Override
-    public void apply() {
+    public void apply()
+    {
         model.setProperties(filePath);
     }
 
@@ -26,7 +27,8 @@ public class PropertiesNotification implements ObservableNotification
     }
 
     @Override
-    public void init(IModel model) {
+    public void init(IModel model)
+    {
         this.model = model;
         model.setNotification(this);
     }
@@ -35,5 +37,11 @@ public class PropertiesNotification implements ObservableNotification
     public Object getData()
     {
         return null;
+    }
+
+    @Override
+    public void setData(Object data)
+    {
+
     }
 }

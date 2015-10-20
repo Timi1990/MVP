@@ -1,35 +1,38 @@
 package view.listener;
 
-import algorithms.mazeGenerators.IndexOutOfBoundsException;
 import algorithms.mazeGenerators.Maze3d;
+import notifications.DisplayCrossSelectionNotification;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 import view.GameCharacter;
+import view.MazeMenu;
 
 import java.util.HashMap;
 import java.util.Random;
 
 public class MazePaintListener implements PaintListener
 {
-    //todo NOTIFICATIONS FOR CROSS SELECTION
+    private final MazeMenu mazeMenu;
+    private final Maze3d maze3d;
     private final Canvas canvas;
-    private Maze3d maze3d;
     private final GameCharacter gameCharacter;
     private final HashMap<Integer, Color> floorToColor = new HashMap<>();
 
-    public MazePaintListener(Canvas canvas, GameCharacter gameCharacter)
+    public MazePaintListener(MazeMenu mazeMenu, Canvas canvas, GameCharacter gameCharacter, Maze3d maze3d)
     {
+        this.mazeMenu = mazeMenu;
         this.canvas = canvas;
         this.gameCharacter = gameCharacter;
+        this.maze3d = maze3d;
+        createFloorToColor(maze3d);
+
     }
 
-    public void init(Maze3d maze3d)
+    private void createFloorToColor(Maze3d maze3d)
     {
-        this.maze3d = maze3d;
-
         for (int i = 0; i < maze3d.getDimension(); i++)
         {
             Random rand = new Random();
@@ -53,31 +56,28 @@ public class MazePaintListener implements PaintListener
         int width = canvas.getSize().x;
         int height = canvas.getSize().y;
 
-        try
+        DisplayCrossSelectionNotification displayCrossSelectionNotification = new DisplayCrossSelectionNotification(maze3d, z, "Z");
+        mazeMenu.applaySetChanged();
+        mazeMenu.notifyObservers(displayCrossSelectionNotification);
+
+        int[][] mazeData = mazeMenu.handleData(displayCrossSelectionNotification);
+
+        int w = width / mazeData[0].length;
+        int h = height / mazeData.length;
+
+        for (int i = 0; i < mazeData.length; i++)
         {
-            int[][] mazeData = maze3d.getCrossSectionByZ(z);
-
-            int w = width / mazeData[0].length;
-            int h = height / mazeData.length;
-
-            for (int i = 0; i < mazeData.length; i++)
+            for (int j = 0; j < mazeData[0].length; j++)
             {
-                for (int j = 0; j < mazeData[0].length; j++)
-                {
-                    int x = j * w;
-                    int y = i * h;
+                int x = j * w;
+                int y = i * h;
 
-                    if (mazeData[i][j] != 0)
-                    {
-                        e.gc.fillRoundRectangle(x, y, w, h, 10, 10);
-                    }
+                if (mazeData[i][j] != 0)
+                {
+                    e.gc.fillRoundRectangle(x, y, w, h, 10, 10);
                 }
             }
-            gameCharacter.paint(e, w, h);
-
-        } catch (IndexOutOfBoundsException e1)
-        {
-            e1.printStackTrace();
         }
+        gameCharacter.paint(e, w, h);
     }
 }

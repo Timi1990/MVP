@@ -1,6 +1,5 @@
 package notifications;
 
-
 import algorithms.mazeGenerators.Maze3d;
 import model.IModel;
 
@@ -16,7 +15,6 @@ public class GenerateMazeNotification implements ObservableNotification<Maze3d>
 
     public GenerateMazeNotification(String mazeName, int dimension, int rows, int columns)
     {
-//        super(mazeName);
         this.mazeName = mazeName;
         this.dimension = dimension;
         this.rows = rows;
@@ -53,24 +51,13 @@ public class GenerateMazeNotification implements ObservableNotification<Maze3d>
         return maze;
     }
 
+    @Override
+    public void setData(Maze3d data)
+    {
+        this.maze = data;
+    }
+
     public String getMazeName() {
         return mazeName;
-    }
-
-    public int getDimension() {
-        return dimension;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getColumns() {
-        return columns;
-    }
-
-    public void setMaze(Maze3d maze)
-    {
-        this.maze = maze;
     }
 }

@@ -2,40 +2,34 @@ package view.listener;
 
 import algorithms.mazeGenerators.Maze3d;
 import notifications.GenerateMazeNotification;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
 import view.GameCharacter;
-import view.MazePropertiesWindow;
-import view.MazeWindow;
+import view.GameHandler;
+import view.MazeDisplay;
+import view.MazeMenu;
 
-class GeneratorMazeWindowListener extends SelectionAdapter
+public class GeneratorMazeWindowListener extends SelectionAdapter
 {
-    private final MazeWindow mazeWindow;
-    private final MazeKeyListener mazeKeyListener;
-    private final MazePaintListener mazePaintListener;
-    private final HelpSelectionListener selectionListener;
-    private final HintSelectionListener hintSelectionListener;
-    private final GameCharacter gameCharacter;
+    private final MazeMenu mazeMenu;
     private final Text t1;
     private final Text t2;
     private final Text t3;
     private final Text t4;
-    private final MazePropertiesWindow mazePropertiesWindow;
 
-    GeneratorMazeWindowListener(MazeWindow mazeWindow, MazeKeyListener mazeKeyListener, MazePaintListener mazePaintListener, HelpSelectionListener selectionListener, HintSelectionListener hintSelectionListener, GameCharacter gameCharacter, Text t1, Text t2, Text t3, Text t4, MazePropertiesWindow mazePropertiesWindow)
+    public GeneratorMazeWindowListener(MazeMenu mazeMenu, Text t1, Text t2, Text t3, Text t4)
     {
-        this.mazeWindow = mazeWindow;
-        this.mazeKeyListener = mazeKeyListener;
-        this.mazePaintListener = mazePaintListener;
-        this.selectionListener = selectionListener;
-        this.hintSelectionListener = hintSelectionListener;
-        this.gameCharacter = gameCharacter;
+
+        this.mazeMenu = mazeMenu;
         this.t1 = t1;
         this.t2 = t2;
         this.t3 = t3;
         this.t4 = t4;
-        this.mazePropertiesWindow = mazePropertiesWindow;
     }
 
     @Override
@@ -47,22 +41,98 @@ class GeneratorMazeWindowListener extends SelectionAdapter
         int columns = Integer.decode(t4.getText());
 
         GenerateMazeNotification generateMazeNotification = new GenerateMazeNotification(mazeName, dimension, rows, columns);
-        mazePropertiesWindow.setChange();
-        mazePropertiesWindow.notifyObservers(generateMazeNotification);
+        mazeMenu.applaySetChanged();
+        mazeMenu.notifyObservers(generateMazeNotification);
 
-        Maze3d maze3d = mazePropertiesWindow.handleData(generateMazeNotification);
+        Maze3d maze3d = mazeMenu.handleData(generateMazeNotification);
 
-        initWith(maze3d);
+        Shell shell = mazeMenu.getShell();
 
-        mazeWindow.run();
+        Button helpButton = createHelpButton(shell);
+        Button hintButton = createHintButton(shell);
+        Label floorNum = createFloorLabel(shell);
+        MazeDisplay mazeDisplay = createMazeDisplay(shell);
+
+        shell.setLayout(new GridLayout(2, false));
+
+        GameCharacter gameCharacter = createGameCharacter(maze3d);
+
+        GameHandler gameHandler = new GameHandler(maze3d, mazeMenu, mazeDisplay);
+
+        createAndAddKeyListener(maze3d, floorNum, mazeDisplay, gameCharacter, gameHandler);
+        createAndAddPaintListener(maze3d, mazeDisplay, gameCharacter);
+
+        createAndAddHelpListenerTo(helpButton, maze3d, floorNum, mazeDisplay, gameCharacter, gameHandler);
+        createAndAddHintListenerTo(hintButton, maze3d, floorNum, mazeDisplay, gameCharacter, gameHandler);
     }
 
-    private void initWith(Maze3d maze3d)
+    private MazeDisplay createMazeDisplay(Shell shell)
     {
-        mazeKeyListener.init(maze3d);
-        mazePaintListener.init(maze3d);
-        gameCharacter.init(maze3d.getStartPosition());
-        selectionListener.init(maze3d);
-        hintSelectionListener.init(maze3d);
+        MazeDisplay mazeDisplay = new MazeDisplay(shell, SWT.BORDER);
+        mazeDisplay.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        return mazeDisplay;
     }
+
+    private void createAndAddHintListenerTo(Button hintButton, Maze3d maze3d, Label floorNum, MazeDisplay mazeDisplay, GameCharacter gameCharacter, GameHandler gameHandler)
+    {
+        HintSelectionListener hintSelectionListener = new HintSelectionListener(mazeMenu, gameCharacter, mazeDisplay, floorNum, maze3d, gameHandler);
+        hintButton.addSelectionListener(hintSelectionListener);
+    }
+
+    private void createAndAddHelpListenerTo(Button helpButton, Maze3d maze3d, Label floorNum, MazeDisplay mazeDisplay, GameCharacter gameCharacter, GameHandler gameHandler)
+    {
+        HelpSelectionListener helpSelectionListener = new HelpSelectionListener(mazeMenu, gameCharacter, mazeDisplay, floorNum, maze3d, gameHandler);
+        helpButton.addSelectionListener(helpSelectionListener);
+    }
+
+    private void createAndAddKeyListener(Maze3d maze3d, Label floorNum, MazeDisplay mazeDisplay, GameCharacter gameCharacter, GameHandler gameHandler)
+    {
+        MazeKeyListener mazeKeyListener = new MazeKeyListener(mazeMenu, gameCharacter, mazeDisplay, floorNum, maze3d, gameHandler);
+        mazeDisplay.addKeyListener(mazeKeyListener);
+    }
+
+    private void createAndAddPaintListener(Maze3d maze3d, MazeDisplay mazeDisplay, GameCharacter gameCharacter)
+    {
+        MazePaintListener mazePaintListener = new MazePaintListener(mazeMenu, mazeDisplay, gameCharacter, maze3d);
+        mazeDisplay.addPaintListener(mazePaintListener);
+    }
+
+    private Label createFloorLabel(Shell shell)
+    {
+        Label floor = new Label(shell, SWT.FILL);
+        floor.setText("Floor");
+        Label floorNum = new Label(shell, SWT.FILL);
+        floorNum.setText("0");
+
+        floor.pack();
+        floorNum.pack();
+        return floorNum;
+    }
+
+    private Button createHelpButton(Shell shell)
+    {
+        Button helpButton = new Button(shell, SWT.PUSH | SWT.BORDER);
+        helpButton.setText("help");
+
+        helpButton.pack();
+
+        return helpButton;
+    }
+
+    private Button createHintButton(Shell shell)
+    {
+        Button hintButton = new Button(shell, SWT.PUSH | SWT.BORDER);
+        hintButton.setText("hint");
+
+        hintButton.pack();
+
+        return hintButton;
+    }
+
+    private GameCharacter createGameCharacter(Maze3d maze3d)
+    {
+        Image ball = new Image(Display.getDefault(), "images/ball.gif");
+        return new GameCharacter(ball, maze3d.getStartPosition());
+    }
+
 }

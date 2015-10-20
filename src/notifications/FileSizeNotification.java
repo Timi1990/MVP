@@ -4,7 +4,7 @@ import model.IModel;
 
 public class FileSizeNotification implements ObservableNotification<Long>
 {
-    private final long size;
+    private long size;
     private final String mazeName;
 
     public FileSizeNotification(long size, String mazeName)
@@ -34,5 +34,11 @@ public class FileSizeNotification implements ObservableNotification<Long>
     public Long getData()
     {
         return size;
+    }
+
+    @Override
+    public void setData(Long data)
+    {
+        this.size = data;
     }
 }

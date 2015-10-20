@@ -4,15 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Properties implements Serializable {
+public class Properties implements Serializable
+{
+    private final List<String> propertiesList = new ArrayList<String>();
 
-    private List<String> propertiesList = new ArrayList<String>();
-
-    public void setPropertiesList(List<String> propertiesList) {
-        this.propertiesList = propertiesList;
-    }
-
-    public List<String> getPropertiesList() {
+    public List<String> getPropertiesList()
+    {
         return propertiesList;
     }
 

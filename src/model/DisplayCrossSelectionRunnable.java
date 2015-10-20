@@ -2,7 +2,6 @@ package model;
 
 import algorithms.mazeGenerators.IndexOutOfBoundsException;
 import algorithms.mazeGenerators.Maze3d;
-import notifications.DisplayCrossSelectionNotification;
 import notifications.ObservableNotification;
 
 public class DisplayCrossSelectionRunnable implements Runnable
@@ -25,13 +24,15 @@ public class DisplayCrossSelectionRunnable implements Runnable
     {
         try
         {
-            ObservableNotification displayCrossSelectionNotification = new DisplayCrossSelectionNotification(getCrossSelectionBy(axis, maze, index));
+            int[][] crossSelectionBy = getCrossSelectionBy(axis, maze, index);
 
-            model.notifyObservers(displayCrossSelectionNotification);
+            ObservableNotification<int[][]> notification = model.<int[][]>getNotification();
+            notification.<int[][]>setData(crossSelectionBy);
+
+            model.notifyObservers(notification);
         }
         catch (IndexOutOfBoundsException e)
         {
-            //todo: print to user
             e.printStackTrace();
         }
     }

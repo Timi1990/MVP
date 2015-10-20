@@ -6,29 +6,28 @@ import model.IModel;
 public class DisplayCrossSelectionNotification implements ObservableNotification<int[][]>
 {
     private int[][] crossSelection;
+    private final String axis;
+    private final Integer index;
+    private final Maze3d maze;
     private IModel model;
-    private String axis;
-    private Integer index;
-    private Maze3d maze;
 
-    public DisplayCrossSelectionNotification(int[][] crossSelection)
+    public DisplayCrossSelectionNotification(Maze3d maze, Integer index, String axis)
     {
-        this.crossSelection = crossSelection;
-    }
-
-
-    public DisplayCrossSelectionNotification(String axis,Integer index,Maze3d maze) {
         this.axis = axis;
         this.index = index;
         this.maze = maze;
-
     }
+
     @Override
     public void apply()
     {
-        try {
-            model.getCrossSelectionBy(maze,index);
-        } catch (Exception e) {
+        try
+        {
+            model.setNotification(this);
+            model.getCrossSelectionBy(maze, index, axis);
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
@@ -58,6 +57,12 @@ public class DisplayCrossSelectionNotification implements ObservableNotification
     public int[][] getData()
     {
         return crossSelection;
+    }
+
+    @Override
+    public void setData(int[][] data)
+    {
+        this.crossSelection = data;
     }
 
 }

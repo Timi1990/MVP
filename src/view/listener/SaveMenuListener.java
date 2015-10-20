@@ -25,7 +25,7 @@ public class SaveMenuListener extends SelectionAdapter {
         fileDialog.setText("Save");
         fileDialog.setFilterPath("C:/");
         String filePath = fileDialog.open();//todo check if works
-        mazeMenu.setChange();
+        mazeMenu.applaySetChanged();
         SaveMazeNotification saveMazeNotification = new SaveMazeNotification(filePath);
         mazeMenu.notifyObservers(saveMazeNotification);
     }

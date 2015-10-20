@@ -5,7 +5,7 @@ import model.IModel;
 
 public class DisplaySolutionNotification implements ObservableNotification<Solution>
 {
-    private final Solution solution;
+    private Solution solution;
     private IModel model;
 
     public DisplaySolutionNotification(Solution solution)
@@ -36,5 +36,11 @@ public class DisplaySolutionNotification implements ObservableNotification<Solut
     public Solution getData()
     {
         return solution;
+    }
+
+    @Override
+    public void setData(Solution data)
+    {
+        this.solution = data;
     }
 }

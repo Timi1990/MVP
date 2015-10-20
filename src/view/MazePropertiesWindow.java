@@ -1,98 +1,54 @@
 package view;
 
-import model.MazeModel;
-import notifications.ObservableNotification;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import presenter.Presenter;
-import view.listener.GeneratorMazeWindowListenerFactory;
+import org.eclipse.swt.widgets.*;
+import view.listener.GeneratorMazeWindowListener;
 
-public class MazePropertiesWindow extends BasicWindow implements IView
+public class MazePropertiesWindow
 {
-    MazePropertiesWindow(int width, int height)
+    private final MazeMenu mazeMenu;
+
+    public MazePropertiesWindow(MazeMenu mazeMenu)
     {
-        super(width, height);
+        this.mazeMenu = mazeMenu;
     }
 
-    @Override
-    public void init()
+    public Shell createWindow()
     {
-
-
-        getShell().setText("Maze properties");
+        Shell shell1 = new Shell(Display.getDefault());
+        shell1.setSize(400, 150);
+        shell1.setText("Maze properties");
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 4;
-        getShell().setLayout(gridLayout);
+        shell1.setLayout(gridLayout);
 
-        Label nameLabel = new Label(getShell(), SWT.BORDER);
+        Label nameLabel = new Label(shell1, SWT.BORDER);
         nameLabel.setText("Maze name");
 
-        Label dimensionLabel = new Label(getShell(), SWT.BORDER);
+        Label dimensionLabel = new Label(shell1, SWT.BORDER);
         dimensionLabel.setText("Dimension");
-        Label rowLabel = new Label(getShell(), SWT.BORDER);
+        Label rowLabel = new Label(shell1, SWT.BORDER);
         rowLabel.setText("Rows");
-        Label columnsLabel = new Label(getShell(), SWT.BORDER);
+        Label columnsLabel = new Label(shell1, SWT.BORDER);
         columnsLabel.setText("Columns");
-        Text t1 = new Text(getShell(), SWT.BORDER);
-        Text t2 = new Text(getShell(), SWT.SINGLE | SWT.BORDER);
-        Text t3 = new Text(getShell(), SWT.SINGLE | SWT.BORDER);
-        Text t4 = new Text(getShell(), SWT.SINGLE | SWT.BORDER);
+        Text t1 = new Text(shell1, SWT.BORDER);
+        Text t2 = new Text(shell1, SWT.SINGLE | SWT.BORDER);
+        Text t3 = new Text(shell1, SWT.SINGLE | SWT.BORDER);
+        Text t4 = new Text(shell1, SWT.SINGLE | SWT.BORDER);
 
-        Button button = new Button(getShell(), SWT.PUSH);
+        Button button = new Button(shell1, SWT.PUSH);
         button.setText("Generate");
-
         button.pack();
-        getShell().pack();
+        t1.pack();
+        t2.pack();
+        t3.pack();
+        t4.pack();
 
-        GeneratorMazeWindowListenerFactory generatorMazeWindowListenerFactory = new GeneratorMazeWindowListenerFactory(this);
+        GeneratorMazeWindowListener generatorMazeWindowListener = new GeneratorMazeWindowListener(mazeMenu, t1, t2, t3, t4);
 
+        button.addSelectionListener(generatorMazeWindowListener);
 
-        button.addSelectionListener(generatorMazeWindowListenerFactory.createFrom(t1,t2,t3,t4));
-    }
-
-    public void setChange()
-    {
-        setChanged();
-    }
-
-    @Override
-    public Canvas getCanvas()
-    {
-        return null;
-    }
-
-    @Override
-    public void setBackGround(Color backGround)
-    {
-
-    }
-
-    @Override
-    public void notifyFromReader(String notify)
-    {
-
-    }
-
-    @Override
-    public void handleCommandNotFound()
-    {
-
-    }
-
-    @Override
-    public void displayData(ObservableNotification observableNotification)
-    {
-
-    }
-
-    @Override
-    public <T> T handleData(ObservableNotification<T> observableNotification)
-    {
-       return observableNotification.getData();
+        return shell1;
     }
 }

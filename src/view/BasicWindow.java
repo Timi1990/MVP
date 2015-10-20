@@ -1,16 +1,11 @@
 package view;
 
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import view.listener.BasicWindowListeners;
 
 import java.util.Observable;
 
-public abstract class BasicWindow extends Observable implements Runnable, BasicWindowListeners
+public abstract class BasicWindow extends Observable implements Runnable
 {
     protected Display display = Display.getDefault();
     protected Shell shell = new Shell(display);
@@ -43,30 +38,8 @@ public abstract class BasicWindow extends Observable implements Runnable, BasicW
         });
     }
 
-    public Display getDisplay()
-    {
-        return display;
-    }
-
     public Shell getShell()
     {
         return shell;
     }
-
-    @Override
-    public void addKeyListener(KeyListener keyListener)
-    {
-        //Override in specially window
-    }
-
-    @Override
-    public void addPaintListener(PaintListener paintListener)
-    {
-        //Override in specially window
-    }
-
-    public abstract Canvas getCanvas();
-
-
-    public abstract void setBackGround(Color backGround);
 }

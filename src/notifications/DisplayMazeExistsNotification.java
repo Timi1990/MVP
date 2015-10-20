@@ -17,13 +17,21 @@ public class DisplayMazeExistsNotification implements ObservableNotification
     }
 
     @Override
-    public void init(IModel model) {
+    public void init(IModel model)
+    {
 
     }
+
 
     @Override
     public Object getData()
     {
         return null;
+    }
+
+    @Override
+    public void setData(Object data)
+    {
+
     }
 }

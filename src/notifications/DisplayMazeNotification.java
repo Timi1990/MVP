@@ -5,8 +5,8 @@ import model.IModel;
 
 public class DisplayMazeNotification implements ObservableNotification<Maze3d>
 {
-    private final Maze3d maze;
     private IModel model;
+    private Maze3d maze;
 
     public DisplayMazeNotification(Maze3d maze)
     {
@@ -34,5 +34,11 @@ public class DisplayMazeNotification implements ObservableNotification<Maze3d>
     public Maze3d getData()
     {
         return maze;
+    }
+
+    @Override
+    public void setData(Maze3d data)
+    {
+        this.maze = data;
     }
 }

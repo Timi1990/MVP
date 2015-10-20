@@ -5,7 +5,7 @@ import algorithms.mazeGenerators.Maze3d;
 import algorithms.search.Searchable;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
-import notifications.SolveMazeNotification;
+import notifications.ObservableNotification;
 
 import java.util.concurrent.Callable;
 
@@ -31,10 +31,10 @@ public class SolveMazeCall implements Callable<Solution>
 
         Solution solution = searcher.search(searchable);
 
-        SolveMazeNotification solveMazeNotification =
-                new SolveMazeNotification(searcher.getClass().getSimpleName(), mazeName);
+        ObservableNotification<Solution> notification = model.<Solution>getNotification();
+        notification.setData(solution);
 
-        model.notifyObservers(solveMazeNotification);
+        model.notifyObservers(notification);
 
         return solution;
     }
